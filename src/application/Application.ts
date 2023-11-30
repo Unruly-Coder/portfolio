@@ -8,6 +8,7 @@ import {World} from "./world/World";
 import {Time} from "./utils/Time";
 import * as dat from 'dat.gui';
 import Stats from "stats.js";
+import {Sound} from "./Sound";
 
 export class Application {
    mouseControl: MouseControl;
@@ -17,6 +18,7 @@ export class Application {
    renderer: Renderer;
    world: World;
    time: Time;
+   sound: Sound;
    debug?: dat.GUI;
    stats?: Stats;
 
@@ -28,12 +30,11 @@ export class Application {
     this.scene = new Scene();
     this.sizes = new Sizes();
     this.time = new Time();
+    this.sound = new Sound(this);
     this.mouseControl = new MouseControl(this);
     this.camera = new Camera(this);
     this.world = new World(this);
     this.renderer = new Renderer(this);
-    
-
     
     this.time.on('tick', () => {
       this.update();
@@ -51,7 +52,7 @@ export class Application {
     document.body.appendChild(this.stats.dom);
     
     
-    this.debug = new dat.GUI({ width: 320 });
+    this.debug = new dat.GUI({ width: 280 });
     this.debug.domElement.onmouseenter = () => {
       this.mouseControl.disable();
     }

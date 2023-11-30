@@ -5,8 +5,8 @@ export class Camera {
   
   readonly instance: THREE.PerspectiveCamera
   constructor(private application: Application) {
-    this.instance = new THREE.PerspectiveCamera(75, this.application.sizes.aspectRatio, 0.1, 1000);
-    this.instance.position.z = 7;
+    this.instance = new THREE.PerspectiveCamera(60, this.application.sizes.aspectRatio, 0.1, 1000);
+    this.instance.position.z = 8.5;
     
     this.setDebug()
   }
@@ -57,9 +57,5 @@ export class Camera {
         folder
           .add({reset: () => this.reset()}, 'reset')
     }
-    
-
   }
-  
-  
 }

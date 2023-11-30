@@ -14,9 +14,9 @@ export class Reflector {
   }
   
   createReflector() {
-    const lampGeometry = new THREE.SphereGeometry( 0.1, 8, 8, Math.PI, Math.PI * 2, 0, Math.PI * 0.5 );
+    const lampGeometry = new THREE.SphereGeometry( 0.15, 8, 8, Math.PI, Math.PI * 2, 0, Math.PI * 0.5 );
     const lampMaterial = new THREE.MeshStandardMaterial({
-      color: 'yellow',
+      color: 'black',
     });
     const lampMesh = new THREE.Mesh(lampGeometry, lampMaterial);
     
@@ -107,7 +107,7 @@ export class Reflector {
   private adjustLampRotation() {
     const lampRadius = Math.abs(this.offsetY)
 
-    this.instance.rotation.z = Math.min(Math.max(-Math.PI / 4, Math.atan2(this.direction.y, Math.abs(this.direction.x))), Math.PI / 4) + Math.PI / 2;
+    this.instance.rotation.z = Math.min(Math.max(-Math.PI / 3, Math.atan2(this.direction.y, Math.abs(this.direction.x))), Math.PI / 5) + Math.PI / 2;
     const targetY = this.direction.x > 0 ? 0 : Math.PI;
     this.instance.rotation.y += (targetY - this.instance.rotation.y) * 0.08;
 

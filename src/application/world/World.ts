@@ -5,7 +5,6 @@ import {Room} from "./room/Room";
 import {MouseControl} from "../controls/MouseControl";
 import {Camera} from "../Camera";
 import {Dust} from "./dust/Dust";
-import * as THREE from "three";
 import * as Cannon from "cannon-es";
 import {Box} from "./box/Box";
 
@@ -20,8 +19,9 @@ export class World {
   
   private mouseControl: MouseControl;
   private camera: Camera;
-  
   private physicWorld!: Cannon.World;
+  
+  private cameraTilt: number = 0;
   constructor(private application: Application) {
     this.mouseControl = application.mouseControl;
     this.camera = application.camera;
@@ -30,12 +30,11 @@ export class World {
     
     this.environment = new Environment(this.application);
     this.submarine = new Submarine(this.application);
-
     
     this.room = new Room(this.application);
     this.application.scene.add(this.room.instance);
     
-    this.dust = new Dust(this.application,16,18,4, 1000);
+    this.dust = new Dust(this.application,16,18,4, 1000, 2);
     this.dust.instance.position.z = -1;
     this.dust.instance.position.y = 9;
     this.dust.instance.position.x = -8;
@@ -59,7 +58,10 @@ export class World {
         this.cubes.push(box);
       
     }
-
+    
+    //**
+    // SETUP PHYSICS
+    //**
     this.physicWorld.addBody(this.submarine.physicBody);
     this.room.physicBodies.forEach(physicBody => {
         this.physicWorld.addBody(physicBody);
@@ -69,8 +71,26 @@ export class World {
       body.linearDamping = 0.3;
       body.angularDamping = 0.1;
     });
-
+    
+    this.room.physicBodies.forEach(physicBody => {
+      physicBody.addEventListener('collide', (event: { contact: {
+          bi: any;
+          getImpactVelocityAlongNormal: () => any; }; }) => {
+        const impactVelocity = parseFloat(
+          (event.contact.getImpactVelocityAlongNormal() * event.contact.bi.mass / 100)
+          .toFixed(1)
+        );
+        
+       
+        if(impactVelocity > 0.1) {
+          this.application.sound.sounds.impactmetal.volume(Math.min(impactVelocity * 0.5, 1));
+          this.application.sound.sounds.impactmetal.play();
+        }
+      });
+    })
+    
     this.setupSubmarineControls();
+    this.submarine.physicBody.applyLocalImpulse(new Cannon.Vec3(0, -40, 0));
   }
   
   setupPhysicsWorld() {
@@ -92,30 +112,27 @@ export class World {
     this.mouseControl.on('leftUp', () => {
       this.submarine.stopEngine();
     });
-  }
-  
-  update() {
-    this.submarine.setDirection(
-      this.mouseControl
-        .getCastedPosition()
-        .sub(this.submarine.instance.position)
-        .normalize()
-    );
-    this.submarine.update();
-    this.cubes.forEach(cube => {
-        cube.update();
-        
+    
+    this.mouseControl.on('rightDown', () => {
+      this.submarine.startLoadingExtraPower();
+      
+      console.log('rightDown');
     });
     
+    this.mouseControl.on('rightUp', () => {
+      this.submarine.firePowerMove();
+      console.log('rightUp');
+    });
+  }
+  
+  private syncCameraWithSubmarine() {
     const targetCameraPositionY = this.submarine.instance.position.y;
     const targetCameraPositionX = this.submarine.instance.position.x;
-
-    
-    this.camera.instance.position.y += (targetCameraPositionY - this.camera.instance.position.y) * 0.1;
-    this.camera.instance.position.x += (targetCameraPositionX - this.camera.instance.position.x) * 0.1;
-    
-    this.dust.update();
-    
+    this.camera.instance.position.y += (targetCameraPositionY - this.camera.instance.position.y) * 0.08;
+    this.camera.instance.position.x += (targetCameraPositionX - this.camera.instance.position.x) * 0.02;
+  }
+  
+  private stepPhysics() {
     this.physicWorld.bodies.forEach((body) => {
       if(body.type === Cannon.BODY_TYPES.DYNAMIC && body.velocity.length() != 0.0) {
         body.force.z = 0;
@@ -123,7 +140,26 @@ export class World {
       }
     });
     
+    this.physicWorld.step(1/60, this.application.time.getDeltaElapsedTime(), 3);
+  }
+  
+  update() {
+    const submarineDirection = this.mouseControl
+      .getCastedPosition()
+      .sub(this.submarine.instance.position)
+      .normalize();
+    this.submarine.setDirection(submarineDirection);
+    this.submarine.update();
+    
+    this.cubes.forEach(cube => {
+        cube.update();
+    });
+    
+    this.stepPhysics()
+    this.syncCameraWithSubmarine()
+    this.dust.update();
+    
+    
 
-    this.physicWorld.step(1/60,this.application.time.deltaElapsedTime, 3);
   }
 }

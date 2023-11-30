@@ -8,3 +8,13 @@ canvas {
     top: 0;
     left: 0;
 }
+
+#mute {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1;
+}

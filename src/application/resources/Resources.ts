@@ -1,7 +1,8 @@
 
 import { textures, gltfs, sounds } from "./sources";
-import {TextureLoader, Texture, AudioLoader} from "three";
+import {TextureLoader, Texture} from "three";
 import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader";
+import { Howl } from "howler";
 import { TextureSource } from "./sources.types";
 import EventEmitter from "eventemitter3";
 
@@ -30,12 +31,11 @@ export class Resources extends EventEmitter {
   private readonly loaders: { 
     textureLoader : TextureLoader 
     gltfLoader: GLTFLoader
-    audioLoader: AudioLoader
   }
 
   private textureItems: Record<keyof typeof textures, Texture> = {} as Record<keyof typeof textures, Texture>;
   private gltfItems: Record<keyof typeof gltfs, GLTF> = {} as Record<keyof typeof gltfs, GLTF>;
-  private audioItems: Record<keyof typeof sounds, AudioBuffer> = {} as Record<keyof typeof sounds, AudioBuffer>;
+  private audioItems: Record<keyof typeof sounds, Howl> = {} as Record<keyof typeof sounds, Howl>;
 
 
   private readonly nrToLoad: number;
@@ -47,7 +47,6 @@ export class Resources extends EventEmitter {
     this.loaders = {
       textureLoader: new TextureLoader(),
       gltfLoader: new GLTFLoader(),
-      audioLoader: new AudioLoader(),
     }
     
     this.nrToLoad = Object.keys(textures).length;
@@ -64,7 +63,6 @@ export class Resources extends EventEmitter {
       const source: TextureSource = textures[key];
 
       this.loaders.textureLoader.load(prefix + source.url, (texture) => {
-        console.log(texture);
         this.textureItems[key] = texture;
         this.incrementLoaded();
       }, undefined, (err) => {
@@ -84,10 +82,13 @@ export class Resources extends EventEmitter {
     const soundKeys = Object.keys(sounds) as Array<keyof typeof sounds>;
     soundKeys.forEach((key) => {
       const source = sounds[key];
-      this.loaders.audioLoader.load(prefix + source.url, (audio) => {
-        this.audioItems[key] = audio;
-        this.incrementLoaded();
-      });
+      this.audioItems[key] = new Howl({
+        src: [prefix + source.url],
+        preload: true,
+        onload: () => {
+          this.incrementLoaded();
+        },
+      })
     });
   }
   
@@ -108,7 +109,7 @@ export class Resources extends EventEmitter {
     return this.gltfItems[key];
   }
   
-  getAudio<T extends keyof typeof sounds>(key: T): AudioBuffer {
+  getAudio<T extends keyof typeof sounds>(key: T): Howl {
     return this.audioItems[key];
   }
 }

@@ -66,6 +66,6 @@ export class Dust {
   }
   
   update() {
-    this.particlesMaterial.uniforms.uTime.value = this.application.time.clock.getElapsedTime();
+    this.particlesMaterial.uniforms.uTime.value = this.application.time.getElapsedTime();
   }
 }

@@ -5,6 +5,12 @@ import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js'
 import {DotScreenPass} from "three/examples/jsm/postprocessing/DotScreenPass";
 import {RenderPixelatedPass} from "three/examples/jsm/postprocessing/RenderPixelatedPass";
 import {OutputPass} from "three/examples/jsm/postprocessing/OutputPass";
+import {GlitchPass} from "three/examples/jsm/postprocessing/GlitchPass";
+import {ShaderPass} from "three/examples/jsm/postprocessing/ShaderPass";
+import {RGBShiftShader} from "three/examples/jsm/shaders/RGBShiftShader";
+import {GammaCorrectionShader} from "three/examples/jsm/shaders/GammaCorrectionShader";
+import {UnrealBloomPass} from "three/examples/jsm/postprocessing/UnrealBloomPass";
+import {BokehPass} from "three/examples/jsm/postprocessing/BokehPass";
 
 export class Renderer {
   private readonly renderer: WebGLRenderer;
@@ -13,7 +19,7 @@ export class Renderer {
 
   constructor(private application: Application) {
     this.renderer = new WebGLRenderer({
-      antialias: true
+      antialias: false
     });
     this.renderer.outputColorSpace = SRGBColorSpace;
     this.renderer.shadowMap.enabled = true
@@ -31,14 +37,32 @@ export class Renderer {
 
     // const dotScreenPass = new DotScreenPass( new Vector2( 0, 0 ), 6.5, 4.8);
     // this.effectComposer.addPass(dotScreenPass);
+    
     // const renderPixelatedPass = new RenderPixelatedPass( 3,this.application.scene, this.application.camera.instance );
-    //
-    //
     // this.effectComposer.addPass( renderPixelatedPass );
-    // //
+    //
+    //
     // const outputPass = new OutputPass();
     // this.effectComposer.addPass( outputPass );
+    
+    // const glitchPass = new GlitchPass();
+    // this.effectComposer.addPass( glitchPass );
 
+    // const rgbShiftPass = new ShaderPass(RGBShiftShader)
+    // this.effectComposer.addPass(rgbShiftPass)
+
+    // const unrealBloomPass = new UnrealBloomPass(new Vector2(this.application.sizes.width, this.application.sizes.height), 0.5, 0.4, 0.85);
+    // this.effectComposer.addPass(unrealBloomPass); 
+
+
+
+    
+    // const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader)
+    // this.effectComposer.addPass(gammaCorrectionPass)
+    
+
+    
+ 
     
     document.body.appendChild(this.renderer.domElement);
   }

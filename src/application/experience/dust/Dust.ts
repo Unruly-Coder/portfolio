@@ -5,8 +5,7 @@ import {Application} from "../../Application";
 
 export class Dust {
 
-  instance: Points
-  
+  private instance: Points
   private positions: Float32Array;
   private particlesMaterial: ShaderMaterial;
   constructor(private application: Application ,width: number, height: number, deep: number, nrOfParticles: number, size: number = 1) {
@@ -36,8 +35,6 @@ export class Dust {
       sizes[i] = Math.max(1,(1 + Math.random())) * this.application.sizes.allowedPixelRatio;
     }
     
-    
-
     particlesGeometry.setAttribute('position', new Float32BufferAttribute(new Float32Array(this.positions), 3));
     particlesGeometry.setAttribute('color', new Float32BufferAttribute(colors, 4));
     particlesGeometry.setAttribute('size', new Float32BufferAttribute(sizes, 1));
@@ -57,12 +54,17 @@ export class Dust {
       depthWrite: false,
       blending: AdditiveBlending,
       vertexColors: true,
-      
-      
     })
-
-
+    
     this.instance = new Points(particlesGeometry, this.particlesMaterial)
+  }
+
+  addInstanceToScene() {
+    this.application.scene.add(this.instance);
+  }
+  
+  setPosition(x: number, y: number, z: number) {
+    this.instance.position.set(x, y, z);
   }
   
   update() {

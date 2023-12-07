@@ -24,7 +24,7 @@ export class Bubbles {
         verticalAngles.forEach((verticalAngle) => {
           horizontalAngles.forEach((horizontalAngle) => {
             const bubbleEmitter = new BubbleEmitter(this.application);
-            bubbleEmitter.instance.position.setFromSphericalCoords(this.submarine.submarineRadius + 0.3, Math.PI * verticalAngle, Math.PI * (side === "right" ? horizontalAngle : horizontalAngle + 1));
+            bubbleEmitter.instance.position.setFromSphericalCoords(this.submarine.submarineRadius + 0.25, Math.PI * verticalAngle, Math.PI * (side === "right" ? horizontalAngle : horizontalAngle + 1));
             bubbleEmitter.instance.lookAt(0,0,0);
             this.bubbleEmitters.push(bubbleEmitter);
             
@@ -48,7 +48,7 @@ export class Bubbles {
  
         if(this.isBubbling) {
           
-          if(this.submarine.direction.dot(bubbleEmitter.emitterDirection) > 0.2) {
+          if(this.submarine.direction.dot(bubbleEmitter.emitterDirection) > 0.05) {
             bubbleEmitter.startEmitting();
           } else {
             bubbleEmitter.stopEmitting();

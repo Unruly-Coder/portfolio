@@ -1,7 +1,9 @@
 
-import { textures, gltfs, sounds } from "./sources";
+import {textures, gltfs, sounds, fonts} from "./sources";
 import {TextureLoader, Texture} from "three";
 import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader";
+import { FontLoader, Font} from "three/examples/jsm/loaders/FontLoader";
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { Howl } from "howler";
 import { TextureSource } from "./sources.types";
 import EventEmitter from "eventemitter3";
@@ -31,11 +33,13 @@ export class Resources extends EventEmitter {
   private readonly loaders: { 
     textureLoader : TextureLoader 
     gltfLoader: GLTFLoader
+    fontLoader: FontLoader
   }
 
   private textureItems: Record<keyof typeof textures, Texture> = {} as Record<keyof typeof textures, Texture>;
   private gltfItems: Record<keyof typeof gltfs, GLTF> = {} as Record<keyof typeof gltfs, GLTF>;
   private audioItems: Record<keyof typeof sounds, Howl> = {} as Record<keyof typeof sounds, Howl>;
+  private fontItems: Record<keyof typeof fonts, Font> = {} as Record<keyof typeof fonts, Font>;
 
 
   private readonly nrToLoad: number;
@@ -43,32 +47,40 @@ export class Resources extends EventEmitter {
   
   constructor() {
     super();  
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath( '/libs/draco/' );
+    const gtlfLoader = new GLTFLoader();
+    gtlfLoader.setDRACOLoader(dracoLoader);
     
     this.loaders = {
       textureLoader: new TextureLoader(),
-      gltfLoader: new GLTFLoader(),
+      gltfLoader: gtlfLoader,
+      fontLoader: new FontLoader(),
     }
     
-    this.nrToLoad = Object.keys(textures).length;
+    this.nrToLoad = Object.keys(textures).length + Object.keys(gltfs).length + Object.keys(sounds).length + Object.keys(fonts).length;
     this.nrLoaded = 0
     
     this.load();
   }
   
   private load() {
-    const prefix = './application/resources';
+    const prefix = '';
+    
     const textureKeys = Object.keys(textures) as Array<keyof typeof textures>;
     
     textureKeys.forEach((key ) => {
       const source: TextureSource = textures[key];
-
+      
       this.loaders.textureLoader.load(prefix + source.url, (texture) => {
         this.textureItems[key] = texture;
         this.incrementLoaded();
-      }, undefined, (err) => {
-        console.log(err);
+      }, undefined, 
+        (error) => {
+        console.log(error, key);
       })
     });
+    
     
     const gltfKeys = Object.keys(gltfs) as Array<keyof typeof gltfs>;
     gltfKeys.forEach((key) => {
@@ -76,7 +88,10 @@ export class Resources extends EventEmitter {
       this.loaders.gltfLoader.load(prefix + source.url, (gltf) => {
         this.gltfItems[key] = gltf;
         this.incrementLoaded();
-      })
+      }, undefined,
+        (error) => {
+          console.log(error, key);
+        })
     });
     
     const soundKeys = Object.keys(sounds) as Array<keyof typeof sounds>;
@@ -88,7 +103,22 @@ export class Resources extends EventEmitter {
         onload: () => {
           this.incrementLoaded();
         },
+        onloaderror: (id, error) => {
+          console.log(error, key);
+        }
       })
+    });
+    
+    const fontKeys = Object.keys(fonts) as Array<keyof typeof fonts>;
+    fontKeys.forEach((key) => {
+      const source = fonts[key];
+      this.loaders.fontLoader.load(prefix + source.url, (font) => {
+        this.fontItems[key] = font;
+        this.incrementLoaded();
+      }, undefined,
+        (error) => {
+          console.log(error, key);
+        })
     });
   }
   
@@ -111,5 +141,9 @@ export class Resources extends EventEmitter {
   
   getAudio<T extends keyof typeof sounds>(key: T): Howl {
     return this.audioItems[key];
+  }
+  
+  getFont<T extends keyof typeof fonts>(key: T): Font {
+    return this.fontItems[key];
   }
 }

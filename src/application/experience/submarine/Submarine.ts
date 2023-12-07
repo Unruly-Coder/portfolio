@@ -8,6 +8,7 @@ import {Application} from "../../Application";
 import {Reflector} from "./Reflector";
 import * as CANNON from "cannon-es";
 import {Bubbles} from "./Bubbles";
+import EventEmitter from "eventemitter3";
 
 
 const coneMaterial =new THREE.MeshBasicMaterial({
@@ -27,7 +28,7 @@ const coneGeometry =  new THREE.CylinderGeometry(
   Math.PI * 2
 );
 
-export class Submarine {
+export class Submarine extends EventEmitter {
 
   instance!: Object3D;
   physicBody!: CANNON.Body;
@@ -49,7 +50,11 @@ export class Submarine {
   private reflector!: Reflector
   private bubbles!: Bubbles;
   
+  private lastVelocity: number = 0;
+  
   constructor(private application: Application) {
+    super();
+    
     this.direction = new Vector3(1,1,1).normalize();
     
     this.createSubmarineObject3d();
@@ -75,7 +80,7 @@ export class Submarine {
 
     this.submarine = new Mesh(geometry, material);
     
-    const submarinePointLight = new THREE.PointLight(0x7eeefc, 5);
+    const submarinePointLight = new THREE.PointLight(0x7eeefc, 2.5);
     
     submarinePointLight.position.y = 0;
     submarinePointLight.position.z = 0;
@@ -108,16 +113,14 @@ export class Submarine {
     const bubbleCone3 = this.createBubbleCone();
 
     
-
+    bubbleCone1.mesh.position.x = Math.cos(Math.PI * 0.25) * this.submarineRadius * 1.1;
+    bubbleCone1.mesh.position.y = Math.sin(Math.PI * 0.25) * this.submarineRadius * 1.1;
     
-    bubbleCone1.mesh.position.x = Math.cos(Math.PI * 0.25) * 1.1 ;
-    bubbleCone1.mesh.position.y = Math.sin(Math.PI * 0.25) * 1.1 ;
+    bubbleCone2.mesh.position.x = Math.cos(0) * this.submarineRadius * 1.1;
+    bubbleCone2.mesh.position.y = Math.sin(0) * this.submarineRadius * 1.1;
     
-    bubbleCone2.mesh.position.x = Math.cos(0) * 1.1 ;
-    bubbleCone2.mesh.position.y = Math.sin(0) * 1.1 ;
-    
-    bubbleCone3.mesh.position.x = Math.cos(Math.PI * 1.75) * 1.1;
-    bubbleCone3.mesh.position.y = Math.sin(Math.PI * 1.75) * 1.1 ;
+    bubbleCone3.mesh.position.x = Math.cos(Math.PI * 1.75) * this.submarineRadius * 1.1;
+    bubbleCone3.mesh.position.y = Math.sin(Math.PI * 1.75) * this.submarineRadius * 1.1;
 
     bubbleCone1.mesh.rotation.z = Math.PI * 0.75;
     bubbleCone2.mesh.rotation.z = Math.PI * 0.5;
@@ -151,25 +154,21 @@ export class Submarine {
     // group.add(this.directionArrow);
     group.add(this.submarine);
     
-
     this.instance = group;
-
-    // this.bubbleEmitter = new BubbleEmitter(this.application);
-    // this.submarine.add(this.bubbleEmitter.instance);
     
-    
-
-    this.application.scene.add(this.instance);
   }
   
   private createSubmarinePhysicBody() {
-    const shape = new CANNON.Sphere(this.submarineRadius * 1.1);
+    const shape = new CANNON.Sphere(this.submarineRadius + 0.1);
     this.physicBody = new CANNON.Body({
       mass: this.mass,
-      position: new CANNON.Vec3(0, 8, 0),
+      position: new CANNON.Vec3(0, 3, 0),
       shape: shape
     });
+    
+    this.syncObject3d();
   }
+  
   
   private createBubbles() {
     this.bubbles = new Bubbles(this.application, this);
@@ -307,6 +306,14 @@ export class Submarine {
     this.isExtraPowerLoading = false;
   }
 
+  addInstanceToScene() {
+    this.application.scene.add(this.instance);
+  }
+
+  addBodyToPhysicalWorld() {
+    this.application.physicWorld.addBody(this.physicBody);
+  }
+
   update() {
     if(this.isExtraPowerLoading) {
       this.loadExtraPower();
@@ -314,6 +321,12 @@ export class Submarine {
     
     if(this.forceStrength > 0) {
       this.physicBody.applyLocalForce(new CANNON.Vec3(this.force.x, this.force.y, this.force.z));
+    }
+    
+    const currentVelocity = this.physicBody.velocity.length();
+    if(this.lastVelocity !==  currentVelocity) {
+      this.emit('velocityChange', currentVelocity);
+      this.lastVelocity = this.physicBody.velocity.length();
     }
     
     this.bubbles.update();

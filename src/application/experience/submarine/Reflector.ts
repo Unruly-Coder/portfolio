@@ -22,8 +22,8 @@ export class Reflector {
     
   const coneGeometry =  new THREE.CylinderGeometry(
       0.1,
-      3.95,
-      8,
+      8.95,
+      18,
       32,
       1,
       true,
@@ -33,7 +33,7 @@ export class Reflector {
   const coneMaterial =new THREE.MeshBasicMaterial({
     color: new THREE.Color( 0x7eeefc ),
     transparent: true,
-    opacity: 0.3,
+    opacity: 0.1,
   
     fog:true,
     // alphaMap: this.application.resources.getTexture('lightRay'),
@@ -45,12 +45,12 @@ export class Reflector {
     coneGeometry,
     coneMaterial
     );
-    cone.position.y = -4.0;
+    cone.position.y = -9.0;
     cone.rotation.y = Math.PI * 2;
     
     
     
-    const spotLight = new THREE.SpotLight( this.colors.spotlightColor, 6000 );//0x7eeefc
+    const spotLight = new THREE.SpotLight( this.colors.spotlightColor, 100 );//0x7eeefc
     spotLight.penumbra = 0.5;
 
     spotLight.position.y = 0;

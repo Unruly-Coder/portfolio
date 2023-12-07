@@ -1,7 +1,4 @@
-import { GltfSource, SoundSource} from "./sources.types";
-
-
-
+import { GltfSource, SoundSource, FontSource} from "./sources.types";
 export const textures = {
   flashlightLight: {
     name: 'flashlightLight',
@@ -13,9 +10,25 @@ export const textures = {
     type: 'texture',
     url: '/textures/angryimg2.png',
   },
+  engineBubbles: {
+    name: 'engineBubbles',
+    type: 'texture',
+    url: '/textures/light_01.png',
+  }
 } as const 
 
-export const gltfs: Record<string, GltfSource> = {}
+export const gltfs: Record<string, GltfSource> = {
+  room: {
+    name: 'room',
+    type: 'gltf',
+    url: '/models/test-room.glb',
+  },
+  plank_1: {
+    name: 'plank_1',
+    type: 'gltf',
+    url: '/models/plank_1.glb',
+  },
+}
 
 export const sounds: Record<string, SoundSource> = {
   music: {
@@ -37,12 +50,20 @@ export const sounds: Record<string, SoundSource> = {
   powerload: {
     name: 'powerload',
     type: 'sound',
-    url: '/sounds/powerload.ogg',
+    url: '/sounds/powerload.mp3',
   },
   impactmetal: {
     name: 'impactmetal',
     type: 'sound',
-    url: '/sounds/impactmetal.ogg',
+    url: '/sounds/impactmetal.mp3',
   },
 }
+
+export const fonts: Record<string, FontSource> = {
+  helvetiker: {
+    name: 'helvetiker',
+    type: 'font',
+    url: '/fonts/optimer_bold.typeface.json',
+  }
+} 
 

@@ -18,13 +18,14 @@ export class Environment {
   constructor(private application: Application) {
     
     this.application.scene.background = new THREE.Color( this.colors.background );
-    this.fog = new THREE.FogExp2( this.colors.fog, 0.16);
+    this.fog = new THREE.FogExp2( this.colors.fog, 0.07);
+    
     this.application.scene.fog = this.fog;
 
-    this.ambientLight = new THREE.AmbientLight(this.colors.ambientLight, 0.4)
+    this.ambientLight = new THREE.AmbientLight(this.colors.ambientLight, 0)
     this.application.scene.add(this.ambientLight);
 
-    this.hemisphereLight = new THREE.HemisphereLight(this.colors.hemisphereLight, this.colors.hemisphereGroundLight, 0.5);
+    this.hemisphereLight = new THREE.HemisphereLight(this.colors.hemisphereLight, this.colors.hemisphereGroundLight, 0.01);
     this.application.scene.add(this.hemisphereLight);
     
     this.setDebug();

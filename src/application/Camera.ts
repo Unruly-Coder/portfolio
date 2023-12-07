@@ -4,9 +4,14 @@ import {Application} from "./Application";
 export class Camera {
   
   readonly instance: THREE.PerspectiveCamera
+  private readonly fov: number = 50;
+  private readonly z: number = 13;
   constructor(private application: Application) {
-    this.instance = new THREE.PerspectiveCamera(60, this.application.sizes.aspectRatio, 0.1, 1000);
-    this.instance.position.z = 8.5;
+    this.instance = new THREE.PerspectiveCamera(this.fov, this.application.sizes.aspectRatio, 0.1, 1000);
+    this.instance.position.z = this.z;
+    this.instance.position.y = 3;
+    this.instance.position.x = 0;
+    
     
     this.setDebug()
   }
@@ -17,11 +22,13 @@ export class Camera {
   }
 
   reset() {
-    this.instance.position.z = 7;
+    this.instance.position.x = 0;
+    this.instance.position.y = 3;
+    this.instance.position.z = this.z;
     this.instance.rotation.x = 0;
     this.instance.rotation.y = 0;
     this.instance.rotation.z = 0;
-    this.instance.fov = 75;
+    this.instance.fov = this.fov;
     this.instance.updateProjectionMatrix()
   }
   
@@ -32,7 +39,7 @@ export class Camera {
         folder.open();
      
         folder
-          .add(this.instance.position, 'z', 5, 15)
+          .add(this.instance.position, 'z', 5, 25)
           .name('camera z')
         
         folder

@@ -1,12 +1,16 @@
-body {
+body, html {
     margin: 0; 
     padding: 0;
     background: #000;
+    font-family: Arial;
+    overscroll-behavior-y: none;
 }
 
 canvas {
     top: 0;
     left: 0;
+    position: fixed;
+    z-index: -1;
 }
 
 #mute {
@@ -14,7 +18,19 @@ canvas {
     bottom: 20px;
     left: 20px;
     color: #fff;
-    font-size: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    background: black;
+    border: none;
+    z-index: 1;
+}
+
+#credit {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: dimgray;
+    font-size: 12px;
     cursor: pointer;
     z-index: 1;
 }

@@ -1,5 +1,5 @@
 import {Application} from "./Application";
-import {PCFSoftShadowMap, SRGBColorSpace, Vector2, WebGLRenderer} from "three";
+import {PCFSoftShadowMap, SRGBColorSpace, Vector2, WebGLRenderer, ACESFilmicToneMapping} from "three";
 import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js'
 import {DotScreenPass} from "three/examples/jsm/postprocessing/DotScreenPass";
@@ -19,8 +19,9 @@ export class Renderer {
 
   constructor(private application: Application) {
     this.renderer = new WebGLRenderer({
-      antialias: false
+      antialias: true
     });
+
     this.renderer.outputColorSpace = SRGBColorSpace;
     this.renderer.shadowMap.enabled = true
     this.renderer.shadowMap.type = PCFSoftShadowMap
@@ -37,14 +38,18 @@ export class Renderer {
 
     // const dotScreenPass = new DotScreenPass( new Vector2( 0, 0 ), 6.5, 4.8);
     // this.effectComposer.addPass(dotScreenPass);
-    
+    //
     // const renderPixelatedPass = new RenderPixelatedPass( 3,this.application.scene, this.application.camera.instance );
+    // renderPixelatedPass.renderToScreen = true;
+    // renderPixelatedPass.normalEdgeStrength = 0;
+    //
+    //
     // this.effectComposer.addPass( renderPixelatedPass );
     //
     //
     // const outputPass = new OutputPass();
     // this.effectComposer.addPass( outputPass );
-    
+    //
     // const glitchPass = new GlitchPass();
     // this.effectComposer.addPass( glitchPass );
 

@@ -25,8 +25,6 @@ export class Application {
    sound: Sound;
    debug?: dat.GUI;
    stats?: Stats;
-
-   private isExperienceStarted = false;
    
   constructor(public resources: Resources) {
     if(location.hash === '#debug') {
@@ -79,7 +77,7 @@ export class Application {
   }
   
   experienceStart() {
-    this.isExperienceStarted = true;
+    this.experience.start();
   }
   
   resize() {
@@ -91,11 +89,7 @@ export class Application {
     this.stats?.begin();
     
     this.mouseControl.updateRaycaster();
-    
-    if(this.isExperienceStarted) {
-      this.experience.update();
-    }
-    
+    this.experience.update();
     this.renderer.update();
     
     this.stats?.end();

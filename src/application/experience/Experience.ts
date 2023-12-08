@@ -55,6 +55,8 @@ export class Experience {
     this.application.physicWorld.bodies.forEach((body) => {
       body.linearDamping = 0.3;
       body.angularDamping = 0.2;
+      body.allowSleep = true;
+      body.linearFactor.set(1, 1, 0);
     });
   }
   
@@ -78,8 +80,9 @@ export class Experience {
         this.obstacle1.activate();
       }
     });
-
-    //setup submarine controls
+  }
+  
+  private setupSubmarineControls() {
     this.mouseControl.on('leftDown', () => {
       this.submarine.startEngine();
     });
@@ -120,14 +123,11 @@ export class Experience {
   }
   
   private stepPhysics() {
-    this.application.physicWorld.bodies.forEach((body) => {
-      if(body.type === Cannon.BODY_TYPES.DYNAMIC && body.velocity.length() != 0.0) {
-        body.force.z = 0;
-        body.velocity.z = 0;
-      }
-    });
-    
     this.application.physicWorld.step(1/60, this.application.time.getDeltaElapsedTime(), 3);
+  }
+  
+  start() {
+    this.setupSubmarineControls();
   }
   
   update() {

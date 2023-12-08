@@ -82,10 +82,10 @@ export class Submarine extends EventEmitter {
 
     this.submarine = new Mesh(geometry, material);
     
-    const submarinePointLight = new THREE.PointLight(0x7eeefc, 2.5);
+    const submarinePointLight = new THREE.PointLight(0x7eeefc, 1.5);
     
     submarinePointLight.position.y = 0;
-    submarinePointLight.position.z = 0;
+    submarinePointLight.position.z = -1.5;
     submarinePointLight.shadow.mapSize.width = 64;
     submarinePointLight.shadow.mapSize.height = 64;
     

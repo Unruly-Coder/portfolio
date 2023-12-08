@@ -32,6 +32,7 @@ export class Room {
     const floor2Left = new CANNON.Box(new CANNON.Vec3(2, 7.5, 6));
     const floor3Right = new CANNON.Box(new CANNON.Vec3(1.5, 3, 6));
     const floor3Left = new CANNON.Box(new CANNON.Vec3(1.5, 3, 6));
+    const lastFloor = new CANNON.Box(new CANNON.Vec3(15.5, 0.5, 6));
   
     
     
@@ -43,6 +44,7 @@ export class Room {
      const floor2LeftBody = new CANNON.Body({ mass: 0, shape: floor2Left });
      const floor3RightBody = new CANNON.Body({ mass: 0, shape: floor3Right });
      const floor3LeftBody = new CANNON.Body({ mass: 0, shape: floor3Left });
+      const lastFloorBody = new CANNON.Body({ mass: 0, shape: lastFloor });
      
      
     
@@ -57,6 +59,8 @@ export class Room {
 
     floor3RightBody.position.set(13.5, -3 - 24, 0);
     floor3LeftBody.position.set(3.5, -3 - 24, 0);
+    
+    lastFloorBody.position.set(-modelOffset + 15, -3 - 27.5, 0);
 
     
     
@@ -71,8 +75,8 @@ export class Room {
    this.physicBodies = [
      floorBody, ceilingBody, wallRightBody, wallLeftBody,
      floor2RightBody, floor2LeftBody,
-     floor3RightBody, 
-     floor3LeftBody
+     floor3RightBody, floor3LeftBody,
+     lastFloorBody
    ];
   }
 

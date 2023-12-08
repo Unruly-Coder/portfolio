@@ -63,6 +63,7 @@ export class Reflector {
 
     spotLight.angle = Math.PI / 6;
     spotLight.map = this.application.resources.getTexture('flashlightLight');
+    
 
     
     this.spotLight = spotLight;

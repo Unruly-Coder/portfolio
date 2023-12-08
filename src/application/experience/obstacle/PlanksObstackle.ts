@@ -44,6 +44,12 @@ export class PlanksObstacle {
     })
   }
   
+  applyForceToPlanks() {
+    this.planks.forEach((plank) => {
+        plank.applyForce();
+    })
+  }
+  
   update() {
     this.planks.forEach(plank => {
       plank.update();

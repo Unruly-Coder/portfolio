@@ -33,7 +33,9 @@ export class Experience {
     this.setupSubmarine();
     this.setupMap();
     this.setupDust();
-    
+
+    this.camera.instance.position.x = this.submarine.initialPosition.x;
+    this.camera.instance.position.y = this.submarine.initialPosition.y;
 
     //this has to be done after all object creation;
     this.adjustPhysicDamping();

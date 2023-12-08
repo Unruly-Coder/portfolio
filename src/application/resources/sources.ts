@@ -57,6 +57,11 @@ export const sounds: Record<string, SoundSource> = {
     type: 'sound',
     url: '/sounds/impactmetal.mp3',
   },
+  bigimpact: {
+    name: 'bigimpact',
+    type: 'sound',
+    url: '/sounds/bigimpact.mp3',
+  }
 }
 
 export const fonts: Record<string, FontSource> = {

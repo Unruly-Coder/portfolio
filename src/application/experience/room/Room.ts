@@ -15,6 +15,7 @@ export class Room {
   
   private createRoomObject3d() {
     const room = this.application.resources.getGltf('room');
+   
     this.application.scene.add(room.scene);
     this.instance = room.scene
   }

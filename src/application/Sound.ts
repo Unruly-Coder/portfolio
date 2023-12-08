@@ -4,15 +4,15 @@ import {Application} from "./Application";
 export class Sound {
   
   private isMuted = false;
+  private audioButton = document.getElementById('audio');
   
   constructor(private application: Application) {
     this.init();
-    this.toggleMute();
   }
   
   init() {
     this.sounds.music.loop(true);
-    this.sounds.music.volume(0.2);
+    this.sounds.music.volume(0.4);
     this.sounds.music.play();
 
     this.sounds.engine.loop(true);
@@ -29,6 +29,9 @@ export class Sound {
     this.sounds.impactmetal.loop(false)
     this.sounds.impactmetal.volume(1);
     
+    this.sounds.bigimpact.loop(false)
+    this.sounds.bigimpact.volume(0.5);
+    
     this.initMuteButton();
   }
   
@@ -38,13 +41,12 @@ export class Sound {
     impactwave: this.application.resources.getAudio('impactwave'),
     powerload: this.application.resources.getAudio('powerload'),
     impactmetal: this.application.resources.getAudio('impactmetal'),
+    bigimpact: this.application.resources.getAudio('bigimpact'),
   }
   
   initMuteButton() {
-    const muteButton = document.getElementById('mute');
-    
-    if(muteButton) {
-      muteButton.addEventListener('click', () => {
+    if(this.audioButton) {
+     this.audioButton.addEventListener('click', () => {
         this.toggleMute();
       })
     }
@@ -53,5 +55,13 @@ export class Sound {
   toggleMute() {
     this.isMuted = !this.isMuted;
     Howler.mute(this.isMuted);
+    
+    if( this.audioButton) {
+      if(this.isMuted) {
+        this.audioButton.classList.add('muted');
+      } else {
+        this.audioButton.classList.remove('muted');
+      }
+    }
   }
 }

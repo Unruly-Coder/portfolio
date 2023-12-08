@@ -100,6 +100,7 @@ export class Resources extends EventEmitter {
       this.audioItems[key] = new Howl({
         src: [prefix + source.url],
         preload: true,
+        
         onload: () => {
           this.incrementLoaded();
         },
@@ -125,7 +126,10 @@ export class Resources extends EventEmitter {
   private incrementLoaded() {
     this.nrLoaded++;
     
-    console.log(`Loaded ${this.nrLoaded} of ${this.nrToLoad}`);
+    console.log(`Loaded ${this.nrLoaded} of ${this.nrToLoad}`)
+    
+    this.emit('progress', this.percentLoaded);
+    
     if (this.nrLoaded === this.nrToLoad) {
       this.emit('loaded');
     }
@@ -145,5 +149,9 @@ export class Resources extends EventEmitter {
   
   getFont<T extends keyof typeof fonts>(key: T): Font {
     return this.fontItems[key];
+  }
+  
+  get percentLoaded() {
+    return this.nrLoaded / this.nrToLoad;
   }
 }

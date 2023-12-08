@@ -19,6 +19,7 @@ export class Renderer {
 
   constructor(private application: Application) {
     this.renderer = new WebGLRenderer({
+      canvas: document.querySelector('canvas#canvas')!,
       antialias: true
     });
 
@@ -36,6 +37,9 @@ export class Renderer {
     const renderPass = new RenderPass(this.application.scene, this.application.camera.instance);
     this.effectComposer.addPass(renderPass);
 
+    
+    
+    
     // const dotScreenPass = new DotScreenPass( new Vector2( 0, 0 ), 6.5, 4.8);
     // this.effectComposer.addPass(dotScreenPass);
     //
@@ -69,7 +73,7 @@ export class Renderer {
     
  
     
-    document.body.appendChild(this.renderer.domElement);
+    // document.body.appendChild(this.renderer.domElement);
   }
   
   resize() {

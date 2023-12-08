@@ -11,7 +11,9 @@ import {Sound} from "./Sound";
 import * as CANNON from "cannon-es";
 import {Experience} from "./experience/Experience";
 
+
 export class Application {
+
    mouseControl: MouseControl;
    scene: Scene;
    physicWorld: CANNON.World;
@@ -24,9 +26,13 @@ export class Application {
    debug?: dat.GUI;
    stats?: Stats;
 
-  
+   private isExperienceStarted = false;
+   
   constructor(public resources: Resources) {
-    this.setDebug();
+    if(location.hash === '#debug') {
+      this.setDebug();
+    }
+    
     
     this.scene = new Scene();
     this.physicWorld = new CANNON.World();
@@ -37,6 +43,7 @@ export class Application {
     this.camera = new Camera(this);
     this.experience = new Experience(this);
     this.renderer = new Renderer(this);
+
     
     this.time.on('tick', () => {
       this.update();
@@ -71,6 +78,10 @@ export class Application {
     this.time.start();
   }
   
+  experienceStart() {
+    this.isExperienceStarted = true;
+  }
+  
   resize() {
     this.camera.resize();
     this.renderer.resize();
@@ -80,7 +91,11 @@ export class Application {
     this.stats?.begin();
     
     this.mouseControl.updateRaycaster();
-    this.experience.update()
+    
+    if(this.isExperienceStarted) {
+      this.experience.update();
+    }
+    
     this.renderer.update();
     
     this.stats?.end();

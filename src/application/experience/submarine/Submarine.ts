@@ -51,6 +51,7 @@ export class Submarine extends EventEmitter {
   private bubbles!: Bubbles;
   
   private lastVelocity: number = 0;
+  readonly initialPosition: Vector3 = new Vector3(4,3,0);
   
   constructor(private application: Application) {
     super();
@@ -60,6 +61,7 @@ export class Submarine extends EventEmitter {
     this.createSubmarineObject3d();
     this.createSubmarinePhysicBody();
     this.createBubbles();
+    //this.syncObject3d();
   }
   
   private createSubmarineObject3d() {
@@ -86,7 +88,6 @@ export class Submarine extends EventEmitter {
     submarinePointLight.position.z = 0;
     submarinePointLight.shadow.mapSize.width = 64;
     submarinePointLight.shadow.mapSize.height = 64;
-
     
     this.submarine.add(submarinePointLight);
 
@@ -153,6 +154,7 @@ export class Submarine extends EventEmitter {
 
     // group.add(this.directionArrow);
     group.add(this.submarine);
+    group.position.set(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z);
     
     this.instance = group;
     
@@ -162,11 +164,9 @@ export class Submarine extends EventEmitter {
     const shape = new CANNON.Sphere(this.submarineRadius + 0.1);
     this.physicBody = new CANNON.Body({
       mass: this.mass,
-      position: new CANNON.Vec3(0, 3, 0),
+      position: new CANNON.Vec3(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z),
       shape: shape
     });
-    
-    this.syncObject3d();
   }
   
   
@@ -331,6 +331,5 @@ export class Submarine extends EventEmitter {
     
     this.bubbles.update();
     this.syncObject3d();
-
   }
 }

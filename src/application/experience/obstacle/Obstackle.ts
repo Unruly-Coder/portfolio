@@ -74,6 +74,10 @@ export class Obstacle {
         this.application.sound.sounds.impactmetal.volume(Math.min(impactVelocity * 0.5, 1));
         this.application.sound.sounds.impactmetal.play();
       }
+      
+      if(!this.isActive && !this.isPermanentBroken) {
+        this.application.sound.sounds.bigimpact.play();
+      }
     });
   }
   
@@ -110,6 +114,7 @@ export class Obstacle {
   broke() {
     this.isPermanentBroken = true;
     this.physicBody.collisionResponse = false;
+    this.planksObstacle.applyForceToPlanks();
   }
   
   update() {

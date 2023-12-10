@@ -73,6 +73,7 @@ export class Resources extends EventEmitter {
       const source: TextureSource = textures[key];
       
       this.loaders.textureLoader.load(prefix + source.url, (texture) => {
+        texture.colorSpace = 'srgb'
         this.textureItems[key] = texture;
         this.incrementLoaded();
       }, undefined, 
@@ -125,8 +126,6 @@ export class Resources extends EventEmitter {
   
   private incrementLoaded() {
     this.nrLoaded++;
-    
-    console.log(`Loaded ${this.nrLoaded} of ${this.nrToLoad}`)
     
     this.emit('progress', this.percentLoaded);
     

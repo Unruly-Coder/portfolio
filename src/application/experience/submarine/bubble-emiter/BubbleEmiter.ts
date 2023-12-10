@@ -95,7 +95,8 @@ export class BubbleEmitter {
       fragmentShader: bubbleFragmentShader,
       blending: AdditiveBlending,
       depthWrite:false,
-      transparent: true
+      transparent: true,
+      
     } );
     
     this.bubbles = new Points(geometry, this.material);

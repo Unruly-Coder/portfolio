@@ -7,6 +7,9 @@ export class Reflector {
   private direction: THREE.Vector3 = new THREE.Vector3(0,-1,0).normalize()
   private colors = { spotlightColor: 0x7eeefc };
   private spotLight!: THREE.SpotLight;
+  private cone!: THREE.Mesh;
+
+  private lastTargetLightBeamRotation = 0;
   
   constructor(private application: Application, private offsetY: number = 0) {
     this.createReflector();
@@ -20,33 +23,35 @@ export class Reflector {
     });
     const lampMesh = new THREE.Mesh(lampGeometry, lampMaterial);
     
+    const coneHeight = 11;
+    const angle = Math.PI / 5;
   const coneGeometry =  new THREE.CylinderGeometry(
       0.1,
-      8.95,
-      18,
-      32,
+    coneHeight * Math.tan(angle) * 0.75,
+      coneHeight,
+      128,
       1,
       true,
-      Math.PI,
-      Math.PI * 2);
+      Math.PI/2,
+      Math.PI);
   
-  const coneMaterial =new THREE.MeshBasicMaterial({
-    color: new THREE.Color( 0x7eeefc ),
-    transparent: true,
-    opacity: 0.1,
-  
-    fog:true,
-    // alphaMap: this.application.resources.getTexture('lightRay'),
+    const coneMaterial =new THREE.MeshBasicMaterial({
+      color: new THREE.Color( 0x7eeefc ),
+      transparent: true,
+      opacity: 0.2,
+      //fog:true,
+      map: this.application.resources.getTexture('lightRay'),
+      alphaMap: this.application.resources.getTexture('lightRay'),
+      
+    });
     
     
-  });
-  
-  const cone = new THREE.Mesh(
-    coneGeometry,
-    coneMaterial
-    );
-    cone.position.y = -9.0;
-    cone.rotation.y = Math.PI * 2;
+   const cone = new THREE.Mesh(
+      coneGeometry,
+      coneMaterial
+      );
+   cone.position.y = -1 * coneHeight / 2;
+   cone.rotation.y = Math.PI ;
     
     
     
@@ -61,7 +66,7 @@ export class Reflector {
     spotLight.target.position.z = 0;
     spotLight.target.position.x = 0;
 
-    spotLight.angle = Math.PI / 6;
+    spotLight.angle = angle;
     spotLight.map = this.application.resources.getTexture('flashlightLight');
     
 
@@ -77,7 +82,9 @@ export class Reflector {
     lamp.add(cone);
     lamp.add(lampMesh);
     lamp.position.y = this.offsetY;
+    
     this.instance = lamp;
+    this.cone = cone;
   }
   
   private setDebug() {
@@ -105,6 +112,7 @@ export class Reflector {
     this.adjustLampRotation();
   }
 
+
   private adjustLampRotation() {
     const lampRadius = Math.abs(this.offsetY)
 
@@ -112,9 +120,13 @@ export class Reflector {
     const targetY = this.direction.x > 0 ? 0 : Math.PI;
     this.instance.rotation.y += (targetY - this.instance.rotation.y) * 0.08;
 
+    const angle = Math.atan2(this.direction.y, this.direction.x);
     const horizontalAngle= Math.abs(Math.atan2(this.direction.y, this.direction.x));
+   
 
+    const lampOnTopSide = angle > 0;
     const lampOnRightSide = horizontalAngle < Math.PI / 2;
+    
     const rightSideX =  Math.sin(Math.PI * 0.25) * lampRadius;
     const leftSideX = Math.sin(Math.PI * 0.75) * -lampRadius;
 
@@ -124,7 +136,31 @@ export class Reflector {
     const difference = Math.abs(this.instance.position.x - targetX);
     const percentage = difference / (rightSideX - leftSideX);
 
-    this.instance.position.z = Math.sin(Math.PI * percentage) * lampRadius * -1
+    this.instance.position.z = Math.sin(Math.PI * percentage) * lampRadius * -1;
+    
+
+    
+
+    const targetBeamRotation = lampOnRightSide ? Math.PI : lampOnTopSide ? Math.PI *2 : 0;
+    const rotationDifference = Math.abs(targetBeamRotation - this.cone.rotation.y);
+
+    if(rotationDifference < 0.001) {
+      this.cone.rotation.y = targetBeamRotation;
+    } else {
+      this.cone.rotation.y += (targetBeamRotation - this.cone.rotation.y) * 0.08;
+    }
+
+    // Handle special cases for 360-degree beam light rotation
+    if(this.lastTargetLightBeamRotation == 0 && targetBeamRotation == Math.PI * 2) {
+      this.cone.rotation.y = 2 * Math.PI;
+    } else if(this.lastTargetLightBeamRotation == Math.PI * 2 && targetBeamRotation == 0) {
+      this.cone.rotation.y = 0;
+    }
+    
+    this.lastTargetLightBeamRotation = targetBeamRotation;
+
+    this.cone.rotation.y += Math.sin(this.application.time.getElapsedTime()* 0.3) * 0.009;
+
   }
   
 

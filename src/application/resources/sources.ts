@@ -8,7 +8,7 @@ export const textures = {
   lightRay: {
     name: 'lightRay',
     type: 'texture',
-    url: '/textures/angryimg2.png',
+    url: '/textures/beam.png',
   },
   engineBubbles: {
     name: 'engineBubbles',

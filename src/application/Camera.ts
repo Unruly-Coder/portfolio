@@ -4,10 +4,10 @@ import {Application} from "./Application";
 export class Camera {
   
   readonly instance: THREE.PerspectiveCamera
-  private readonly fov: number = 50;
+  readonly defaultFOV: number = 50;
   private readonly z: number = 13;
   constructor(private application: Application) {
-    this.instance = new THREE.PerspectiveCamera(this.fov, this.application.sizes.aspectRatio, 0.1, 1000);
+    this.instance = new THREE.PerspectiveCamera(this.defaultFOV, this.application.sizes.aspectRatio, 0.1, 1000);
     this.instance.position.z = this.z;
     this.instance.position.y = 3;
     this.instance.position.x = 0;
@@ -28,7 +28,7 @@ export class Camera {
     this.instance.rotation.x = 0;
     this.instance.rotation.y = 0;
     this.instance.rotation.z = 0;
-    this.instance.fov = this.fov;
+    this.instance.fov = this.defaultFOV;
     this.instance.updateProjectionMatrix()
   }
   

@@ -43,6 +43,8 @@ export class Application {
     this.camera = new Camera(this);
     this.experience = new Experience(this);
     this.renderer = new Renderer(this);
+    
+    this.adjustFOV();
 
     
     this.time.on('tick', () => {
@@ -52,6 +54,17 @@ export class Application {
     this.sizes.on('resize', () => {
         this.resize();
     });
+  }
+  
+  private adjustFOV = () => {
+    if(this.sizes.aspectRatio < 1) {
+      this.camera.instance.fov = 80;
+      this.camera.instance.updateProjectionMatrix();
+    } else {
+      this.camera.instance.fov = this.camera.defaultFOV;
+      this.camera.instance.updateProjectionMatrix();
+    
+    }
   }
   
   setDebug() {
@@ -89,6 +102,7 @@ export class Application {
   resize() {
     this.camera.resize();
     this.renderer.resize();
+    this.adjustFOV();
   }
   
   update() {

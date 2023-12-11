@@ -10,11 +10,12 @@ import Stats from "stats.js";
 import {Sound} from "./Sound";
 import * as CANNON from "cannon-es";
 import {Experience} from "./experience/Experience";
-
+import {MobileControl} from "./controls/MobileControl";
 
 export class Application {
 
    mouseControl: MouseControl;
+   mobileControl: MobileControl;
    scene: Scene;
    physicWorld: CANNON.World;
    sizes: Sizes;
@@ -26,7 +27,7 @@ export class Application {
    debug?: dat.GUI;
    stats?: Stats;
    
-  constructor(public resources: Resources) {
+  constructor(public resources: Resources, enableTouchInterface = false) {
     if(location.hash === '#debug') {
       this.setDebug();
     }
@@ -38,6 +39,7 @@ export class Application {
     this.time = new Time();
     this.sound = new Sound(this);
     this.mouseControl = new MouseControl(this);
+    this.mobileControl = new MobileControl(this);
     this.camera = new Camera(this);
     this.experience = new Experience(this);
     this.renderer = new Renderer(this);
@@ -76,8 +78,12 @@ export class Application {
     this.time.start();
   }
   
-  experienceStart() {
+  experienceStart(enableTouchInterface = false) {
     this.experience.start();
+
+    if(enableTouchInterface) {
+      this.mobileControl.enable();
+    }
   }
   
   resize() {

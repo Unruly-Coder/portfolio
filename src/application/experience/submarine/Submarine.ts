@@ -244,7 +244,7 @@ export class Submarine extends EventEmitter {
     this.direction.copy(direction);
     this.reflector.setDirection(direction);
 
-    this.adjustBenchRotation();
+    
     this.adjustForce();
     this.directionArrow.setDirection(this.direction);
   }
@@ -315,6 +315,9 @@ export class Submarine extends EventEmitter {
   }
 
   update() {
+    this.adjustBenchRotation();
+    this.reflector.update();
+    
     if(this.isExtraPowerLoading) {
       this.loadExtraPower();
     }

@@ -9,7 +9,7 @@ export class Environment {
   
   private readonly colors = {
     background: 0x000000,
-    fog: 0x161F1F,
+    fog: 0x395050,// 0x161F1F,
     ambientLight: 0x404040,
     hemisphereLight: 0xffffff,
     hemisphereGroundLight: 0x153232,
@@ -18,7 +18,7 @@ export class Environment {
   constructor(private application: Application) {
     
     this.application.scene.background = new THREE.Color( this.colors.background );
-    this.fog = new THREE.FogExp2( this.colors.fog, 0.07);
+    this.fog = new THREE.FogExp2( this.colors.fog, 0.05);//0.07);
     
     this.application.scene.fog = this.fog;
 

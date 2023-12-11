@@ -16,9 +16,9 @@ function setProgress(progress: number) {
 function addBodyClass(className: string) {
   document.body.classList.add(className);
 }
-function explorationStartHandler(application:  Application) {
+function explorationStartHandler(application:  Application, enableTouchInterface = false) {
   addBodyClass('exploration-started');
-  application.experienceStart();
+  application.experienceStart(enableTouchInterface);
   
 }
 
@@ -27,7 +27,9 @@ function resourcesLoadedHandler() {
   application.start();
   addBodyClass('resources-loaded');
   
-  exploreButton?.addEventListener('click', () => explorationStartHandler(application))
+  exploreButton?.addEventListener('click', () => explorationStartHandler(application));
+  exploreButton?.addEventListener('touchend', () => explorationStartHandler(application, true));
+  
 }
 
 resources.on('loaded', resourcesLoadedHandler);

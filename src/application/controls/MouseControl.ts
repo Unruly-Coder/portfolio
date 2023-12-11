@@ -31,6 +31,8 @@ export class MouseControl extends EventEmitter {
       window.requestAnimationFrame(() => {
         this.screenPosition.x = event.clientX;
         this.screenPosition.y = event.clientY;
+        
+        this.emit("move", event);
       })
  
     });

@@ -24,7 +24,7 @@ export class Dust {
       colors[colorIndex] = (randomShade * 52)/ 255;
       colors[colorIndex+1] = (randomShade * 201) / 255;
       colors[colorIndex+2] = (randomShade * 235) / 255;
-      colors[colorIndex+3] = 0.2 + Math.random() * 0.2;
+      colors[colorIndex+3] = 0.5 + Math.random() * 0.5;
 
 
       const index = i * 3;

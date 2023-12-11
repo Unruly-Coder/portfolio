@@ -7,6 +7,8 @@ import {MouseControl} from "../controls/MouseControl";
 import {Camera} from "../Camera";
 import {Dust} from "./dust/Dust";
 import {Obstacle} from "./obstacle/Obstackle";
+import {MobileControl} from "../controls/MobileControl";
+import {Vector2, Vector3} from "three";
 
 export const WORLD_GRAVITY = 0;
 export class Experience {
@@ -18,6 +20,7 @@ export class Experience {
   private obstacle1!: Obstacle;
   
   private mouseControl: MouseControl;
+  private mobileControl: MobileControl;
   private camera: Camera;
   
   
@@ -25,6 +28,7 @@ export class Experience {
     this.setupPhysicsWorld();
     
     this.mouseControl = application.mouseControl;
+    this.mobileControl = application.mobileControl;
     this.camera = application.camera;
     
     this.environment = new Environment(this.application);
@@ -47,7 +51,6 @@ export class Experience {
 
     const broadphase = new Cannon.SAPBroadphase(this.application.physicWorld);
     broadphase.autoDetectAxis();
-
     this.application.physicWorld.broadphase = broadphase;
   }
   
@@ -83,23 +86,48 @@ export class Experience {
   }
   
   private setupSubmarineControls() {
+    this.mobileControl.on('start-move', () => {
+      this.submarine.startEngine();
+    });
+    
     this.mouseControl.on('leftDown', () => {
       this.submarine.startEngine();
     });
 
+    this.mobileControl.on('stop-move', () => {
+      this.submarine.stopEngine();
+    });
+    
     this.mouseControl.on('leftUp', () => {
       this.submarine.stopEngine();
     });
+    
+    this.mobileControl.on('start-power', () => {
+      this.submarine.startLoadingExtraPower();
+    }); 
 
     this.mouseControl.on('rightDown', () => {
       this.submarine.startLoadingExtraPower();
-
-      console.log('rightDown');
     });
+    
+    this.mobileControl.on('stop-power', () => {
+      this.submarine.firePowerMove();
+    })
 
     this.mouseControl.on('rightUp', () => {
       this.submarine.firePowerMove();
-      console.log('rightUp');
+    });
+    
+    this.mouseControl.on('move', () => {
+      const submarineDirection = this.mouseControl
+        .getCastedPosition()
+        .sub(this.submarine.instance.position)
+        .normalize();
+      this.submarine.setDirection(submarineDirection);
+    });
+    
+    this.mobileControl.on('joystick-move', (direction:Vector2) => {
+      this.submarine.setDirection(new Vector3(direction.x, direction.y, 0));
     });
   }
   
@@ -110,7 +138,7 @@ export class Experience {
   }
   
   private setupDust() {
-    this.dust = new Dust(this.application,36,30,18, 2000, 2);
+    this.dust = new Dust(this.application,30,30,18, 2000, 2);
     this.dust.addInstanceToScene();
     this.dust.setPosition(-2, 7, -1);
   }
@@ -132,16 +160,12 @@ export class Experience {
   
   update() {
     this.stepPhysics();
-    const submarineDirection = this.mouseControl
-      .getCastedPosition()
-      .sub(this.submarine.instance.position)
-      .normalize();
-    this.submarine.setDirection(submarineDirection);
+    this.dust.update();
     this.submarine.update();
     this.obstacle1.update();
 
     this.syncCameraWithSubmarine()
-    this.dust.update();
+    
     
   }
 }

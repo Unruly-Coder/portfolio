@@ -173,7 +173,7 @@ export class BubbleEmitter {
           this.bubbles.geometry.attributes.color.needsUpdate = true;
         } else {
           const positionIndex = i * 3;
-          const emitterPosition = this.getEmitterPosition();
+          // const emitterPosition = this.getEmitterPosition();
 
 
           const speed = deltaTime * this.bubblesRandom[i] * 3;
@@ -189,7 +189,7 @@ export class BubbleEmitter {
           const lifeFactor = Math.max(0, Math.min(1, this.maxLifeTime - this.bubblesAge[i] / this.maxLifeTime));
           if(this.isEmitting)
           {
-            this.bubbles.geometry.attributes.color.setW(i, lifeFactor * 0.1);
+            this.bubbles.geometry.attributes.color.setW(i, lifeFactor * 0.15);
             this.bubbles.geometry.attributes.color.needsUpdate = true;
           } else {
             this.bubbles.geometry.attributes.color.array[i * 4 + 3] -= deltaTime * 0.2;

@@ -24,10 +24,10 @@ export class Reflector {
     const lampMesh = new THREE.Mesh(lampGeometry, lampMaterial);
     
     const coneHeight = 11;
-    const angle = Math.PI / 5;
+    const angle = Math.PI / 4;
   const coneGeometry =  new THREE.CylinderGeometry(
       0.1,
-    coneHeight * Math.tan(angle) * 0.75,
+    coneHeight * Math.tan(angle) * 0.55,
       coneHeight,
       128,
       1,
@@ -38,7 +38,7 @@ export class Reflector {
     const coneMaterial =new THREE.MeshBasicMaterial({
       color: new THREE.Color( 0x7eeefc ),
       transparent: true,
-      opacity: 0.2,
+      opacity: 0.1,
       //fog:true,
       map: this.application.resources.getTexture('lightRay'),
       alphaMap: this.application.resources.getTexture('lightRay'),
@@ -56,7 +56,7 @@ export class Reflector {
     
     
     const spotLight = new THREE.SpotLight( this.colors.spotlightColor, 100 );//0x7eeefc
-    spotLight.penumbra = 0.5;
+    spotLight.penumbra = 1;
 
     spotLight.position.y = 0;
     spotLight.position.z = 0;
@@ -109,7 +109,7 @@ export class Reflector {
   
   setDirection(direction: THREE.Vector3) {
     this.direction.copy(direction);
-    this.adjustLampRotation();
+
   }
 
 
@@ -161,6 +161,10 @@ export class Reflector {
 
     this.cone.rotation.y += Math.sin(this.application.time.getElapsedTime()* 0.3) * 0.009;
 
+  }
+  
+  update() {
+    this.adjustLampRotation();
   }
   
 

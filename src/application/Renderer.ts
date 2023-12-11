@@ -41,8 +41,8 @@ export class Renderer {
 
     //film pass
     const filmPass = new FilmPass(
-      0.4,   // noise intensity
-      false
+      0.5,   // noise intensity
+      true
 
 
     );

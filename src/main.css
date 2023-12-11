@@ -1,3 +1,12 @@
+
+* {
+    -webkit-touch-callout: none; /* Safari */
+    -webkit-user-select: none; /* Chrome */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+}
+
 body, html {
     margin: 0; 
     padding: 0;
@@ -6,7 +15,6 @@ body, html {
     font-family: 'Poppins', sans-serif;
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
-    user-select: none;
 }
 
 canvas {
@@ -132,7 +140,7 @@ canvas {
     justify-content: center;
     position: absolute;
     gap: 1px;
-    bottom: 20px;
+    top: 20px;
     left: 20px;
     cursor: pointer;
     background: none;
@@ -179,8 +187,62 @@ canvas {
         animation-duration: calc(var(--speed) + 0.5s);
         animation-delay: 0.25s;
     }
-    
+}
 
+.mobile-button {
+    position: fixed;
+    background: rgba(255,255,255, 0.1);
+    right: 20px;
+    bottom: 20px;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 100%;
+    height: 70px;
+    width: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: opacity 0.4s ease-in-out, background 0.2s ease-in-out;
+    will-change: opacity, background;
+    font-family: 'Poppins', sans-serif;
+    
+    &.pressed {
+        background: rgba(255,255,255, 0.5);
+    }
+
+    &.power-move-button {
+        bottom: 110px
+    }
+}
+
+.joystick-button {
+    right: auto;
+    left: 20px;
+    width: 155px;
+    height: 155px;
+  
+    &.pressed {
+        background: rgba(255,255,255, 0.1);
+    }
+
+    &.pressed:before {
+        background: rgba(255,255,255, 0.5);
+    }
+    
+    &:before {
+        content: "";
+        position: absolute;
+        width: 50%;
+        height: 50%;
+        border-radius: 50%;
+        background: rgba(255,255,255, 0.1);
+        transition:  background 0.2s ease-in-out;
+        will-change:  background;
+        transform: translateX(calc(var(--vX) * 50px)) translateY(calc(var(--vY) * 50px));
+        
+
+    }
 }
 
 @keyframes music-bar-anim {
@@ -198,15 +260,5 @@ canvas {
     }
 }
 
-/*@keyframes title-reveal {*/
-/*    0% {*/
-/*        transform: translateY(50%);*/
-/*        opacity: 0;*/
-/*    }*/
-/*   */
-/*    100% {*/
-/*        transform: translateY(0);*/
-/*        opacity: 1;*/
-/*    }*/
-/*}*/
+
 

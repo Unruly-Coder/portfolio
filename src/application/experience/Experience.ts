@@ -2,26 +2,30 @@ import * as Cannon from "cannon-es";
 import {Application} from "../Application";
 import {Submarine} from "./submarine/Submarine";
 import {Environment} from "./environment/Environment";
-import {Room} from "./room/Room";
+import {Map} from "./map/Map";
 import {MouseControl} from "../controls/MouseControl";
 import {Camera} from "../Camera";
 import {Dust} from "./dust/Dust";
 import {Obstacle} from "./obstacle/Obstackle";
 import {MobileControl} from "../controls/MobileControl";
 import {Vector2, Vector3} from "three";
+import {ActiveElements} from "./active-elements/ActiveElements";
 
 export const WORLD_GRAVITY = 0;
 export class Experience {
   
   private environment: Environment;
   private submarine!: Submarine;
-  private room!: Room;
+  private map!: Map;
   private dust!: Dust;
   private obstacle1!: Obstacle;
+  private activeElements!: ActiveElements;
   
   private mouseControl: MouseControl;
   private mobileControl: MobileControl;
   private camera: Camera;
+  
+  
   
   
   constructor(private application: Application) {
@@ -37,6 +41,7 @@ export class Experience {
     this.setupSubmarine();
     this.setupMap();
     this.setupDust();
+    this.setupActiveElements();
 
     this.camera.instance.position.x = this.submarine.initialPosition.x;
     this.camera.instance.position.y = this.submarine.initialPosition.y;
@@ -58,9 +63,16 @@ export class Experience {
     this.application.physicWorld.bodies.forEach((body) => {
       body.linearDamping = 0.3;
       body.angularDamping = 0.2;
-      body.allowSleep = true;
       body.linearFactor.set(1, 1, 0);
     });
+  }
+  
+  private setupActiveElements() {
+    this.activeElements = new ActiveElements(
+      this.application, 
+      this.submarine.getReflectorRangeFactor,
+      this.submarine.getDistance2D
+    );
   }
   
   private setupObstacles() {
@@ -132,15 +144,15 @@ export class Experience {
   }
   
   private setupMap() {
-    this.room = new Room(this.application);
-    this.room.addInstanceToScene();
-    this.room.addBodyToPhysicalWorld();
+    this.map = new Map(this.application);
+    this.map.addInstanceToScene();
+    this.map.addBodyToPhysicalWorld();
   }
   
   private setupDust() {
-    this.dust = new Dust(this.application,30,30,18, 2000, 2);
+    this.dust = new Dust(this.application,30,30,8, 1000, 2);
     this.dust.addInstanceToScene();
-    this.dust.setPosition(-2, 7, -1);
+    this.dust.setPosition(-2, 7, 2);
   }
   
   private syncCameraWithSubmarine() {
@@ -151,7 +163,7 @@ export class Experience {
   }
   
   private stepPhysics() {
-    this.application.physicWorld.step(1/60, this.application.time.getDeltaElapsedTime(), 3);
+    this.application.physicWorld.step(1/60, this.application.time.getDeltaElapsedTime(), 10);
   }
   
   start() {
@@ -163,9 +175,7 @@ export class Experience {
     this.dust.update();
     this.submarine.update();
     this.obstacle1.update();
-
+    this.activeElements.update();
     this.syncCameraWithSubmarine()
-    
-    
   }
 }

@@ -66,7 +66,9 @@ export class Plank {
 
     const body = new CANNON.Body({
       mass: 1,
-      shape: box
+      shape: box,
+      allowSleep: true,
+      sleepSpeedLimit: 0.1,
     });
     
     

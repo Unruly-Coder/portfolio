@@ -54,6 +54,7 @@ export class Dust {
       depthWrite: false,
       blending: AdditiveBlending,
       vertexColors: true,
+      precision: 'lowp',
     })
     
     this.instance = new Points(particlesGeometry, this.particlesMaterial)

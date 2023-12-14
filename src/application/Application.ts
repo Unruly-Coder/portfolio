@@ -11,6 +11,7 @@ import {Sound} from "./Sound";
 import * as CANNON from "cannon-es";
 import {Experience} from "./experience/Experience";
 import {MobileControl} from "./controls/MobileControl";
+import Tween from "@tweenjs/tween.js";
 
 export class Application {
 
@@ -111,6 +112,8 @@ export class Application {
     this.mouseControl.updateRaycaster();
     this.experience.update();
     this.renderer.update();
+
+    Tween.update();
     
     this.stats?.end();
   }

@@ -3,13 +3,17 @@ import * as THREE from "three";
 
 export class Reflector {
   
-  instance!: THREE.Group;
-  private direction: THREE.Vector3 = new THREE.Vector3(0,-1,0).normalize()
+  instance: THREE.Group = new THREE.Group();
+  private direction: THREE.Vector3 = new THREE.Vector3(0,-1,0);
+  private lampWorldDirection: THREE.Vector3 = new THREE.Vector3(0,-1,0);
+  private lampWorldPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
+  private lightedObjectPosition = new THREE.Vector3(0,0,0);
   private colors = { spotlightColor: 0x7eeefc };
   private spotLight!: THREE.SpotLight;
   private cone!: THREE.Mesh;
 
   private lastTargetLightBeamRotation = 0;
+  
   
   constructor(private application: Application, private offsetY: number = 0) {
     this.createReflector();
@@ -69,22 +73,38 @@ export class Reflector {
     spotLight.angle = angle;
     spotLight.map = this.application.resources.getTexture('flashlightLight');
     
-
-    
     this.spotLight = spotLight;
 
-
-
-    const lamp = new THREE.Group();
-
-    lamp.add(spotLight);
-    lamp.add(spotLight.target);
-    lamp.add(cone);
-    lamp.add(lampMesh);
-    lamp.position.y = this.offsetY;
     
-    this.instance = lamp;
+    this.instance.add(spotLight);
+    this.instance.add(spotLight.target);
+    this.instance.add(cone);
+    this.instance.add(lampMesh);
+    this.instance.position.y = this.offsetY;
+    
+
     this.cone = cone;
+  }
+
+  private adjustLampDirection() {
+    const bottomThreshold = -Math.PI / 3;
+    const topThreshold = Math.PI / 5;
+    
+    const directionAngle = Math.atan2(this.direction.y, Math.abs(this.direction.x));
+
+  
+    if(directionAngle > bottomThreshold && directionAngle < topThreshold) {
+      this.lampWorldDirection.x = Math.cos(directionAngle);
+      this.lampWorldDirection.y = Math.sin(directionAngle);
+    } 
+        if(this.direction.x <= 0 && this.lampWorldDirection.x > 0) {
+          this.lampWorldDirection.x *= -1;
+        } else if(this.direction.x > 0 && this.lampWorldDirection.x < 0) {
+          this.lampWorldDirection.x *= -1;
+        }
+        
+    this.lampWorldDirection.normalize();
+
   }
   
   private setDebug() {
@@ -102,27 +122,44 @@ export class Reflector {
           .onChange(() => {
             this.spotLight.color.set(this.colors.spotlightColor)
           })
-      
-          
     }
   }
   
   setDirection(direction: THREE.Vector3) {
     this.direction.copy(direction);
-
   }
-
-
+  
+  getRangeFactor(objectPosition: THREE.Object3D, dataObject: { range: number, distance: number}) {
+    const lampWorldPosition = this.instance.getWorldPosition(this.lampWorldPosition);
+    const lampToObject = objectPosition
+      .getWorldPosition(this.lightedObjectPosition)
+      .sub(lampWorldPosition)
+      
+    const distance = lampToObject.length();
+    lampToObject.normalize();
+    
+    dataObject.distance = distance;
+    dataObject.range = lampToObject.dot(this.lampWorldDirection);
+    return dataObject;
+  }
+  
   private adjustLampRotation() {
+    const threshold = 0.001;
     const lampRadius = Math.abs(this.offsetY)
 
+    
     this.instance.rotation.z = Math.min(Math.max(-Math.PI / 3, Math.atan2(this.direction.y, Math.abs(this.direction.x))), Math.PI / 5) + Math.PI / 2;
+    
     const targetY = this.direction.x > 0 ? 0 : Math.PI;
-    this.instance.rotation.y += (targetY - this.instance.rotation.y) * 0.08;
-
+    const rotationYDifference = Math.abs(targetY - this.instance.rotation.y);
+    if(rotationYDifference < threshold) {
+      this.instance.rotation.y = targetY;
+    } else {
+      this.instance.rotation.y += (targetY - this.instance.rotation.y) * 0.08;
+    }
+    
     const angle = Math.atan2(this.direction.y, this.direction.x);
     const horizontalAngle= Math.abs(Math.atan2(this.direction.y, this.direction.x));
-   
 
     const lampOnTopSide = angle > 0;
     const lampOnRightSide = horizontalAngle < Math.PI / 2;
@@ -160,11 +197,11 @@ export class Reflector {
     this.lastTargetLightBeamRotation = targetBeamRotation;
 
     this.cone.rotation.y += Math.sin(this.application.time.getElapsedTime()* 0.3) * 0.009;
-
   }
   
   update() {
     this.adjustLampRotation();
+    this.adjustLampDirection();
   }
   
 

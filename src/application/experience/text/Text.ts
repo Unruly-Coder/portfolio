@@ -32,8 +32,8 @@ export class Text {
       bevelSize: 0.02,
       bevelOffset: 0,
       bevelSegments: 3,
- 
     } );
+
 
     const textMaterial = new MeshStandardMaterial({
       color: 'grey',

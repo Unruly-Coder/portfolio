@@ -13,6 +13,7 @@ export class MouseControl extends EventEmitter {
    private readonly raycaster: Raycaster;
    private readonly castPosition: Vector3;
    private readonly castPlane: Plane;
+   private readonly percentagePosition: Vector2;
    
    private  isEnabled: boolean = true;
    private button: number = -1;
@@ -23,6 +24,7 @@ export class MouseControl extends EventEmitter {
     this.scrollDelta = new Vector2();
     this.castPosition = new Vector3();
     this.raycaster = new Raycaster();
+    this.percentagePosition = new Vector2();
     this.castPlane = new Plane(new Vector3(0,0,1), 0),
       
     
@@ -92,7 +94,8 @@ export class MouseControl extends EventEmitter {
   }
   
   getPercentagePosition(): Vector2 {  
-    return new Vector2(this.screenPosition.x / window.innerWidth, 1 - this.screenPosition.y / window.innerHeight);
+    this.percentagePosition.set(this.screenPosition.x / window.innerWidth, 1 - this.screenPosition.y / window.innerHeight);
+    return this.percentagePosition;
   }
   
   getNDCPosition(): Vector2 {

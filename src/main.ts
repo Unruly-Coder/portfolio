@@ -19,7 +19,6 @@ function addBodyClass(className: string) {
 function explorationStartHandler(application:  Application, enableTouchInterface = false) {
   addBodyClass('exploration-started');
   application.experienceStart(enableTouchInterface);
-  
 }
 
 function resourcesLoadedHandler() {

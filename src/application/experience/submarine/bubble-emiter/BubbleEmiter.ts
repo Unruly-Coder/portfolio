@@ -19,6 +19,8 @@ export class BubbleEmitter {
 
   instance!: Object3D;
   
+  private readonly worldPosition = new Vector3();
+  
   private readonly nrOfBubbles = 30;
   private readonly maxLifeTime = 0.46;
   private readonly maxEmitPerStep = 1;
@@ -31,6 +33,9 @@ export class BubbleEmitter {
   private bubblesRandom: Float32Array = new Float32Array(this.nrOfBubbles).fill(0);
 
   private material?: ShaderMaterial;
+  
+  private worldQuaternion = new Quaternion();
+  private emitterDirectionVector = new Vector3(0,0, 1);
   constructor(private application: Application) {
     this.initBubbleEmitter();
   }
@@ -53,9 +58,7 @@ export class BubbleEmitter {
   }
   
   private getEmitterPosition() {
-    const emitterPosition = this.instance.getWorldPosition(new Vector3());
-    this.instance.getWorldPosition(emitterPosition);
-    return emitterPosition;
+    return  this.instance.getWorldPosition(this.worldPosition);
   }
 
   initBubbles() {
@@ -96,6 +99,7 @@ export class BubbleEmitter {
       blending: AdditiveBlending,
       depthWrite:false,
       transparent: true,
+      precision: 'lowp',
       
     } );
     
@@ -118,11 +122,10 @@ export class BubbleEmitter {
   }
 
   get emitterDirection() {
-    const vector = new Vector3(0,0,1)
-    const quaternion = new Quaternion();
-    this.instance.getWorldQuaternion(quaternion)
-    vector.applyQuaternion(quaternion)
-    return vector.normalize();
+    this.emitterDirectionVector.set(0,0,1);
+    this.instance.getWorldQuaternion(this.worldQuaternion);
+    this.emitterDirectionVector.applyQuaternion(this.worldQuaternion);
+    return this.emitterDirectionVector;
   }
 
   private emitBubble(bubbleIndex: number) {

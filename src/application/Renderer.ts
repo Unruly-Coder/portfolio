@@ -12,6 +12,7 @@ import {GammaCorrectionShader} from "three/examples/jsm/shaders/GammaCorrectionS
 import {UnrealBloomPass} from "three/examples/jsm/postprocessing/UnrealBloomPass";
 import {BokehPass} from "three/examples/jsm/postprocessing/BokehPass";
 import {FilmPass} from "three/examples/jsm/postprocessing/FilmPass";
+import {SMAAPass} from "three/examples/jsm/postprocessing/SMAAPass";
 
 export class Renderer {
   private readonly renderer: WebGLRenderer;
@@ -21,12 +22,13 @@ export class Renderer {
   constructor(private application: Application) {
     this.renderer = new WebGLRenderer({
       canvas: document.querySelector('canvas#canvas')!,
-      antialias: true,
+      antialias: false,
+      powerPreference: 'high-performance'
 
     });
 
     this.renderer.outputColorSpace = SRGBColorSpace;
-    this.renderer.shadowMap.enabled = true
+    this.renderer.shadowMap.enabled = false
     this.renderer.shadowMap.type = PCFSoftShadowMap
     this.renderer.setSize(this.application.sizes.width, this.application.sizes.height);
     this.renderer.setPixelRatio(this.application.sizes.allowedPixelRatio);
@@ -39,14 +41,13 @@ export class Renderer {
     const renderPass = new RenderPass(this.application.scene, this.application.camera.instance);
     this.effectComposer.addPass(renderPass);
 
-    //film pass
+
+    
+   // film pass
     const filmPass = new FilmPass(
       0.5,   // noise intensity
-      true
-
-
     );
-    filmPass.renderToScreen = true;
+
     this.effectComposer.addPass(filmPass);
 
     
@@ -65,7 +66,9 @@ export class Renderer {
     // const rgbShiftPass = new ShaderPass(RGBShiftShader)
     // this.effectComposer.addPass(rgbShiftPass)
     //
-    // const unrealBloomPass = new UnrealBloomPass(new Vector2(this.application.sizes.width, this.application.sizes.height), 0.5, 0.4, 0.85);
+    // const unrealBloomPass = new UnrealBloomPass(
+    //   new Vector2(this.application.sizes.width, this.application.sizes.height),
+    //   0.3, 0.4, 0.6);
     // this.effectComposer.addPass(unrealBloomPass); 
 
 
@@ -74,12 +77,14 @@ export class Renderer {
     // const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader);
     // this.effectComposer.addPass(gammaCorrectionPass)
 
+
+
     const outputPass = new OutputPass();
     this.effectComposer.addPass( outputPass );
     
- 
+    const smaaPass = new SMAAPass(this.application.sizes.width, this.application.sizes.height);
+    this.effectComposer.addPass(smaaPass);
     
-    // document.body.appendChild(this.renderer.domElement);
   }
   
   resize() {

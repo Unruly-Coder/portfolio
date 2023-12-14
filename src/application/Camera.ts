@@ -7,7 +7,7 @@ export class Camera {
   readonly defaultFOV: number = 50;
   private readonly z: number = 13;
   constructor(private application: Application) {
-    this.instance = new THREE.PerspectiveCamera(this.defaultFOV, this.application.sizes.aspectRatio, 0.1, 1000);
+    this.instance = new THREE.PerspectiveCamera(this.defaultFOV, this.application.sizes.aspectRatio, 0.1, 30);
     this.instance.position.z = this.z;
     this.instance.position.y = 3;
     this.instance.position.x = 0;

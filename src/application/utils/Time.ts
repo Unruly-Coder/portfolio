@@ -25,15 +25,11 @@ export class Time extends EventEmitter {
     return this.clock.getElapsedTime();
   }
 
-  tick() {
+  tick = () => {
     const elapsedTime = this.clock.getElapsedTime();
     this.deltaElapsedTime = elapsedTime - this.lastElapsedTime;
-    this.lastElapsedTime = elapsedTime;
-    
     this.emit("tick");
-    
-    requestAnimationFrame(() => {
-      this.tick();
-    });
+    this.lastElapsedTime = elapsedTime;
+    requestAnimationFrame(this.tick);
   }
 }

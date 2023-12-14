@@ -35,7 +35,7 @@ export class Submarine extends EventEmitter {
   
   readonly submarineRadius: number = 1;
   readonly mass: number = 20;
-  readonly direction: Vector3;
+  readonly direction: Vector3 = new Vector3(1,1,1).normalize();
 
   private readonly maxExtraPower = 190;
   private extraPower: number = 0;
@@ -55,9 +55,6 @@ export class Submarine extends EventEmitter {
   
   constructor(private application: Application) {
     super();
-    
-    this.direction = new Vector3(1,1,1).normalize();
-    
     this.createSubmarineObject3d();
     this.createSubmarinePhysicBody();
     this.createBubbles();
@@ -69,7 +66,7 @@ export class Submarine extends EventEmitter {
 
 
     const geometry =   new THREE.SphereGeometry( this.submarineRadius, 16, 16, Math.PI, Math.PI * 2, Math.PI * 0.15, Math.PI * 0.66 );
-    const material = new THREE.MeshStandardMaterial({
+    const material = new THREE.MeshPhongMaterial({
       color: 'yellow',
       transparent: false,
       opacity: 1,
@@ -150,13 +147,13 @@ export class Submarine extends EventEmitter {
     this.submarine.add(leftBubbleConeGroup2);
     
 
-    const group = new THREE.Group();
+    //const group = new THREE.Group();
 
     // group.add(this.directionArrow);
-    group.add(this.submarine);
-    group.position.set(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z);
+    // group.add(this.submarine);
+    this.submarine.position.set(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z);
     
-    this.instance = group;
+    this.instance = this.submarine;
     
   }
   
@@ -165,7 +162,8 @@ export class Submarine extends EventEmitter {
     this.physicBody = new CANNON.Body({
       mass: this.mass,
       position: new CANNON.Vec3(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z),
-      shape: shape
+      shape: shape,
+      fixedRotation: true,
     });
   }
   
@@ -183,8 +181,18 @@ export class Submarine extends EventEmitter {
   private adjustForce() {
      this.force.set(this.direction.x, this.direction.y, this.direction.z)
       this.force = this.force.scale(this.forceStrength);
-    
-    // this.direction.clone().multiplyScalar(this.forceValue);
+  }
+  
+  getReflectorRangeFactor = (object: THREE.Object3D, dataObject: { range: number, distance: number}) => {
+    return this.reflector.getRangeFactor(object, dataObject);
+  }
+  
+  getDistance2D = (object: THREE.Object3D) => {
+    const x1 = this.instance.position.x;
+    const y1 = this.instance.position.y;
+    const x2 = object.position.x;
+    const y2 = object.position.y;
+    return  Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
   
   private syncObject3d() {
@@ -198,7 +206,6 @@ export class Submarine extends EventEmitter {
     this.instance.position.x += (targetX - this.instance.position.x) * 0.35;
     this.instance.position.y += (targetY - this.instance.position.y) * 0.35;
     this.instance.position.z += (targetZ - this.instance.position.z) * 0.35;
-
     
     const forceLength = this.force.length();
     const minAngle = Math.PI * 0.08;
@@ -243,14 +250,13 @@ export class Submarine extends EventEmitter {
   setDirection(direction: Vector3) {
     this.direction.copy(direction);
     this.reflector.setDirection(direction);
-
     
     this.adjustForce();
     this.directionArrow.setDirection(this.direction);
   }
   
   startEngine() {
-    this.forceStrength = 23;
+    this.forceStrength = 25;
     this.adjustForce();
     this.bubbles.startBubbling()
     
@@ -262,7 +268,6 @@ export class Submarine extends EventEmitter {
     this.adjustForce();
     this.bubbles.stopBubbling()
     this.application.sound.sounds.engine.fade(this.application.sound.sounds.engine.volume(), 0, 1000);
-    
   }
   
   private loadExtraPower() {
@@ -272,7 +277,7 @@ export class Submarine extends EventEmitter {
       this.extraPower += this.application.time.getDeltaElapsedTime() * 100;
     }
 
-    this.physicBody.applyLocalImpulse(new CANNON.Vec3(
+    this.physicBody.applyImpulse(new CANNON.Vec3(
       Math.sin(this.application.time.getElapsedTime() * 31) * this.extraPower / 10,
       Math.cos(this.application.time.getElapsedTime() * 29) * this.extraPower / 10,
       0));
@@ -287,7 +292,7 @@ export class Submarine extends EventEmitter {
   
   firePowerMove() {
     const impulse = new CANNON.Vec3(this.direction.x, this.direction.y, this.direction.z).scale(this.extraPower);
-    this.physicBody.applyLocalImpulse(impulse);
+    this.physicBody.applyImpulse(impulse);
 
     const powerloadSound = this.application.sound.sounds.powerload;
     powerloadSound.fade(powerloadSound.volume(), 0, 100);
@@ -315,15 +320,14 @@ export class Submarine extends EventEmitter {
   }
 
   update() {
-    this.adjustBenchRotation();
-    this.reflector.update();
+
     
     if(this.isExtraPowerLoading) {
       this.loadExtraPower();
     }
     
     if(this.forceStrength > 0) {
-      this.physicBody.applyLocalForce(new CANNON.Vec3(this.force.x, this.force.y, this.force.z));
+      this.physicBody.applyLocalForce(this.force);
     }
     
     const currentVelocity = this.physicBody.velocity.length();
@@ -331,8 +335,11 @@ export class Submarine extends EventEmitter {
       this.emit('velocityChange', currentVelocity);
       this.lastVelocity = this.physicBody.velocity.length();
     }
-    
-    this.bubbles.update();
+
     this.syncObject3d();
+    this.adjustBenchRotation();
+    this.reflector.update();
+    this.bubbles.update();
+
   }
 }

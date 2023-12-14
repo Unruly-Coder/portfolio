@@ -2,7 +2,7 @@ import {Application} from "../../Application";
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 
-export class Room {
+export class Map {
 
   private instance!: THREE.Group;
   private physicBodies!: CANNON.Body[];

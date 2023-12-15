@@ -28,6 +28,16 @@ export const gltfs: Record<string, GltfSource> = {
     type: 'gltf',
     url: '/models/plank_1.glb',
   },
+  submarine: {
+    name: 'submarine',
+    type: 'gltf',
+    url: '/models/submarine.glb',
+  },
+  character: {
+    name: 'character',
+    type: 'gltf',
+    url: '/models/character.glb',
+  }
 }
 
 export const sounds: Record<string, SoundSource> = {

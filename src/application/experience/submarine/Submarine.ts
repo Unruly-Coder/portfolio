@@ -11,22 +11,22 @@ import {Bubbles} from "./Bubbles";
 import EventEmitter from "eventemitter3";
 
 
-const coneMaterial =new THREE.MeshBasicMaterial({
-  color: new THREE.Color( 0x000000 ),
-  transparent: false,
-  fog:true,
-});
-
-const coneGeometry =  new THREE.CylinderGeometry(
-  0.1,
-  0.07,
-  0.2,
-  16,
-  1,
-  false,
-  Math.PI,
-  Math.PI * 2
-);
+// const coneMaterial =new THREE.MeshBasicMaterial({
+//   color: new THREE.Color( 0x000000 ),
+//   transparent: false,
+//   fog:true,
+// });
+//
+// const coneGeometry =  new THREE.CylinderGeometry(
+//   0.1,
+//   0.07,
+//   0.2,
+//   16,
+//   1,
+//   false,
+//   Math.PI,
+//   Math.PI * 2
+// );
 
 export class Submarine extends EventEmitter {
 
@@ -77,27 +77,23 @@ export class Submarine extends EventEmitter {
 
     geometry.rotateX(Math.PI * 0.5);
 
-    this.submarine = new Mesh(geometry, material);
+    // this.submarine = new Mesh(geometry, material);
+    this.submarine = this.application.resources.getGltf('submarine').scene;
     
-    const submarinePointLight = new THREE.PointLight(0x7eeefc, 1.5);
+    //orange color
+    
+    const submarinePointLight = new THREE.PointLight(0xffffff, 0.1);
     
     submarinePointLight.position.y = 0;
-    submarinePointLight.position.z = -1.5;
+    submarinePointLight.position.z = 0;
     submarinePointLight.shadow.mapSize.width = 64;
     submarinePointLight.shadow.mapSize.height = 64;
     
-    this.submarine.add(submarinePointLight);
-
+     //this.submarine.add(submarinePointLight);
     
-    const boxGeometry = new THREE.BoxGeometry(1.4, 0.1, 0.5);
-    const boxMaterial = new THREE.MeshBasicMaterial({
-      color: "black",
-      opacity: 1,
-      
-    });
-    this.bench = new THREE.Mesh(boxGeometry, boxMaterial);
+    this.bench = this.application.resources.getGltf('character').scene;
     this.bench.position.y = -0.3;
-
+    
     this.reflector = new Reflector(this.application, -1);
     
     
@@ -174,7 +170,7 @@ export class Submarine extends EventEmitter {
   }
   
   private createBubbleCone() {
-    const mesh = new Mesh(coneGeometry, coneMaterial);
+    const mesh = new Object3D()//new Mesh(coneGeometry, coneMaterial);
     return { mesh };
   }
   

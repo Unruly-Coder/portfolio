@@ -55,7 +55,7 @@ export class Sizes extends EventEmitter {
     return this._width / this._height;
   }
   
-  get pixelRatio() {
+  private get pixelRatio() {
     return this._pixelRatio;
   }
   

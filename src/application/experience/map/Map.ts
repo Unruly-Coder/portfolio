@@ -15,8 +15,6 @@ export class Map {
   
   private createRoomObject3d() {
     const room = this.application.resources.getGltf('room');
-   
-    this.application.scene.add(room.scene);
     this.instance = room.scene
   }
   
@@ -61,16 +59,7 @@ export class Map {
     floor3LeftBody.position.set(3.5, -3 - 24, 0);
     
     lastFloorBody.position.set(-modelOffset + 15, -3 - 27.5, 0);
-
     
-    
-    //floorBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
-    
-    
-    
-    // ceilingBody.quaternion.setFromEuler(Math.PI * 2, 0, 0)
-    // wallLeftBody.quaternion.setFromEuler(Math.PI * 0.5, 0, 0)
-    // wallRightBody.quaternion.setFromEuler(Math.PI * 0.5, 0, 0)
     
    this.physicBodies = [
      floorBody, ceilingBody, wallRightBody, wallLeftBody,

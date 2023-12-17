@@ -14,6 +14,11 @@ export const textures = {
     name: 'engineBubbles',
     type: 'texture',
     url: '/textures/light_01.png',
+  },
+  enter: {
+    name: 'enter',
+    type: 'texture',
+    url: '/textures/enter.png',
   }
 } as const 
 

@@ -3,37 +3,47 @@ import {
   MeshLambertMaterial,
   Object3D,
   Vector3,
-  IcosahedronGeometry,
+  IcosahedronGeometry, PlaneGeometry,
 } from "three";
 import {Application} from "../../../Application";
 import { Tween,  Easing} from "@tweenjs/tween.js";
 import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
 
-const boxGeometry = new IcosahedronGeometry( 0.5, 0);
-const boxMaterial = new MeshLambertMaterial( { color: 0xffffff, fog: true,  });
-const textMaterial = new MeshBasicMaterial( { color: 0x000000, fog: true,  });
+const rockGeometry = new IcosahedronGeometry( 0.5, 0);
+const rockMaterial = new MeshLambertMaterial( { color: 0xffffff, fog: true,  });
+const textMaterial = new MeshBasicMaterial( { color: 0xffffff, fog: true,  });
+const enterGeometry = new PlaneGeometry( 1, 1, 1 );
+const enterMaterial = new MeshBasicMaterial( { side: 2, transparent: true});
 
 export abstract class ActiveElement { 
   instance: Object3D = new Object3D();
   private tween: Tween<Vector3> | undefined
   private textTween: Tween<Vector3> | undefined
+  private enterTween: Tween<Vector3> | undefined
   private readonly rock: Mesh;
   private readonly text: Mesh;
+  private readonly enter: Mesh;
   
   isActivated: boolean = false;
   isVisible: boolean = true;
   isFocused: boolean = false;
   constructor(protected application: Application, public link: { text: string, url: string}) {
-    this.rock = new Mesh(boxGeometry, boxMaterial);
+    enterMaterial.map = this.application.resources.getTexture('enter');
+    
+    this.rock = new Mesh(rockGeometry, rockMaterial);
     this.text = this.createText(link.text);
-    this.createObject3D();
+    this.enter = this.createEnter();
+    this.assembleObjects();
   }
 
-  private createObject3D() {
+  private assembleObjects() {
     
     this.instance.add(this.text);
     this.text.position.y = 0.8;
     this.text.scale.set(0,0,0);
+    this.instance.add(this.enter);
+    this.enter.position.y = -1.2;
+    this.enter.scale.set(1,1,1);
     this.instance.add( this.rock );
 
   }
@@ -53,9 +63,13 @@ export abstract class ActiveElement {
 
     textGeometry.center();
     const textMesh = new Mesh(textGeometry, textMaterial);
-    this.application.scene.add(textMesh);
-
     return textMesh
+  }
+  
+  private createEnter() { 
+
+    const enterMesh =  new Mesh( enterGeometry, enterMaterial );
+    return enterMesh;
   }
 
   private get positionTween() {
@@ -75,8 +89,16 @@ export abstract class ActiveElement {
       return this.textTween;
     }
   }
+  
+  private get enterScaleTween() {
+    if(this.enterTween) {
+      return this.enterTween;
+    } else {
+      this.enterTween = new Tween(this.enter.scale);
+      return this.enterTween;
+    }
+  }
   addInstanceToScene() {
-    this.instance.scale.set(1,1,1);
     this.application.scene.add(this.instance);
   }
 
@@ -123,6 +145,11 @@ export abstract class ActiveElement {
       .to({x: 1.0, y: 1.0, z: 1.0}, 300)
       .easing(Easing.Quadratic.Out)
       .startFromCurrentValues();
+    this.enterScaleTween
+      .stop()
+      .to({x: 1.0, y: 1.0, z: 1.0}, 300)
+      .easing(Easing.Quadratic.Out)
+      .startFromCurrentValues();
   } 
   
   unfocus() {
@@ -132,12 +159,17 @@ export abstract class ActiveElement {
       .to({x: 0.0, y: 0.0, z: 0.0}, 300)
       .easing(Easing.Quadratic.Out)
       .startFromCurrentValues();
+    this.enterScaleTween
+      .stop()
+      .to({x: 0.0, y: 0.0, z: 0.0}, 300)
+      .easing(Easing.Quadratic.Out)
+      .startFromCurrentValues();
   }
   
   
   update() {
     this.text.lookAt(this.application.camera.instance.position);
-    
+    this.enter.lookAt(this.application.camera.instance.position);
     if(this.isActivated) {
      this.rock.rotation.y += 0.01;
      this.rock.rotation.z += 0.01;

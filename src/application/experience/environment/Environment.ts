@@ -25,7 +25,7 @@ export class Environment {
     this.ambientLight = new THREE.AmbientLight(this.colors.ambientLight, 0)
     this.application.scene.add(this.ambientLight);
 
-    this.hemisphereLight = new THREE.HemisphereLight(this.colors.hemisphereLight, this.colors.hemisphereGroundLight, 0.01);
+    this.hemisphereLight = new THREE.HemisphereLight(this.colors.hemisphereLight, this.colors.hemisphereGroundLight, 0.05);
     this.application.scene.add(this.hemisphereLight);
     
     this.setDebug();

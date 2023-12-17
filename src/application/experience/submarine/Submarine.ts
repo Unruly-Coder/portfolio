@@ -80,12 +80,14 @@ export class Submarine extends EventEmitter {
     // this.submarine = new Mesh(geometry, material);
     this.submarine = this.application.resources.getGltf('submarine').scene;
     
-    //orange color
+    //orange color  0xffa500
     
-    const submarinePointLight = new THREE.PointLight(0xffffff, 0.1);
     
-    submarinePointLight.position.y = 0;
-    submarinePointLight.position.z = 0;
+    const submarinePointLight = new THREE.PointLight(0x7eeefc, 0.2);
+    
+    submarinePointLight.position.y = 0.5;
+    submarinePointLight.position.x = 0
+    submarinePointLight.position.z = -1;
     submarinePointLight.shadow.mapSize.width = 64;
     submarinePointLight.shadow.mapSize.height = 64;
     

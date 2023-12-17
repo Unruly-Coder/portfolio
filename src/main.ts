@@ -5,6 +5,7 @@ import {Resources} from "./application/resources/Resources";
 
 const resources = new Resources();
 const exploreButton = document.getElementById('button');
+const mouseHelper = document.getElementById('mouse-helper');
 
 
 setProgress(0);
@@ -26,7 +27,10 @@ function resourcesLoadedHandler() {
   application.start();
   addBodyClass('resources-loaded');
   
-  exploreButton?.addEventListener('click', () => explorationStartHandler(application));
+  exploreButton?.addEventListener('click', () => {
+    explorationStartHandler(application)
+    mouseHelper?.style.setProperty('opacity', '1');
+  });
   exploreButton?.addEventListener('touchend', () => explorationStartHandler(application, true));
   
 }

@@ -26,7 +26,7 @@ export class Sizes extends EventEmitter {
     super();
     this._width = window.innerWidth;
     this._height = window.innerHeight;
-    this._pixelRatio = Math.min(window.devicePixelRatio, 2);
+    this._pixelRatio = window.devicePixelRatio;
     
     window.addEventListener('resize', () => {
       this._width = window.innerWidth;
@@ -60,7 +60,7 @@ export class Sizes extends EventEmitter {
   }
   
   get allowedPixelRatio() {
-    return Math.min(this.pixelRatio, 1);
+    return Math.min(this.pixelRatio, 2);
   }
   
 }

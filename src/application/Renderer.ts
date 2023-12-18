@@ -45,7 +45,7 @@ export class Renderer {
     
    // film pass
     const filmPass = new FilmPass(
-      0.5,   // noise intensity
+      0.7,   // noise intensity
     );
 
     this.effectComposer.addPass(filmPass);
@@ -89,10 +89,10 @@ export class Renderer {
   
   resize() {
     this.renderer.setSize(this.application.sizes.width, this.application.sizes.height);
-    this.renderer.setPixelRatio(this.application.sizes.pixelRatio);
+    this.renderer.setPixelRatio(this.application.sizes.allowedPixelRatio);
     
     this.effectComposer.setSize(this.application.sizes.width, this.application.sizes.height);
-    this.effectComposer.setPixelRatio(this.application.sizes.pixelRatio);
+    this.effectComposer.setPixelRatio(this.application.sizes.allowedPixelRatio);
   }
   
   update() {

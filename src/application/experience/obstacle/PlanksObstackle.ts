@@ -16,7 +16,6 @@ export class PlanksObstacle {
       const initPosition = { x: mesh.position.x, y: mesh.position.y - 0.2, z: mesh.position.z }
       this.planksData.push(initPosition)
       const plank = new Plank(this.application, mesh)
-      console.log(initPosition);
       plank.setPosition(initPosition.x, initPosition.y, initPosition.z);
       this.planks.push(plank)
     })

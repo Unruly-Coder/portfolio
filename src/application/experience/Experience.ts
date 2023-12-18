@@ -150,7 +150,7 @@ export class Experience {
   }
   
   private setupDust() {
-    this.dust = new Dust(this.application,30,30,8, 1000, 2);
+    this.dust = new Dust(this.application,30,30,7, 500, 2);
     this.dust.addInstanceToScene();
     this.dust.setPosition(-2, 7, 2);
   }

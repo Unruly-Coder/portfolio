@@ -24,7 +24,7 @@ export class Renderer {
     });
 
     this.renderer.outputColorSpace = SRGBColorSpace;
-    this.renderer.shadowMap.enabled = false
+    this.renderer.shadowMap.enabled = true
     this.renderer.shadowMap.type = PCFSoftShadowMap
     this.renderer.setSize(this.application.sizes.width, this.application.sizes.height);
     this.renderer.setPixelRatio(this.application.sizes.allowedPixelRatio);

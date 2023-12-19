@@ -8,6 +8,7 @@ import {Reflector} from "./Reflector";
 import * as CANNON from "cannon-es";
 import {Bubbles} from "./Bubbles";
 import EventEmitter from "eventemitter3";
+import {resources} from "../../resources/Resources";
 
 export class Submarine extends EventEmitter {
 
@@ -44,7 +45,7 @@ export class Submarine extends EventEmitter {
   
   private createSubmarineObject3d() {
     this.directionArrow = new THREE.ArrowHelper(this.direction, new Vector3(0,0,0), 2, 0xff0000);
-    this.submarine = this.application.resources.getGltf('submarine').scene;
+    this.submarine = resources.getGltf('submarine').scene;
     
     //orange color  0xffa500
     
@@ -59,7 +60,7 @@ export class Submarine extends EventEmitter {
     
      //this.submarine.add(submarinePointLight);
     
-    this.bench = this.application.resources.getGltf('character').scene;
+    this.bench = resources.getGltf('character').scene;
     this.bench.position.y = -0.3;
     
     this.reflector = new Reflector(this.application, -1);

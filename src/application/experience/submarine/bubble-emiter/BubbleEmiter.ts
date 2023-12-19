@@ -1,14 +1,11 @@
 import {
   Object3D,
-  BoxGeometry,
-  MeshBasicMaterial,
-  Mesh,
   Vector3,
   Quaternion,
-  ArrowHelper,
   BufferGeometry,
-  PointsMaterial, Points, BufferAttribute, AdditiveBlending, ShaderMaterial, Color
+  Points, BufferAttribute, AdditiveBlending, ShaderMaterial
 } from "three";
+import {resources} from "../../../resources/Resources";
 
 import bubbleVertexShader from "./bubbleVertexShader.glsl";
 import bubbleFragmentShader from "./bubbleFragmentShader.glsl";
@@ -72,7 +69,7 @@ export class BubbleEmitter {
 
     this.material = new ShaderMaterial( {
       uniforms: {
-        pointTexture: { value: this.application.resources.getTexture("engineBubbles") },
+        pointTexture: { value: resources.getTexture("engineBubbles") },
         uTime: { value: 0 },
       },
       vertexShader: bubbleVertexShader,

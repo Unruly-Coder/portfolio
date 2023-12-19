@@ -1,5 +1,6 @@
 import { Howler } from 'howler';
 import {Application} from "./Application";
+import {resources} from "./resources/Resources";
 
 export class Sound {
   
@@ -36,12 +37,12 @@ export class Sound {
   }
   
   sounds = {
-    music: this.application.resources.getAudio('music'),
-    engine: this.application.resources.getAudio('engine'),
-    impactwave: this.application.resources.getAudio('impactwave'),
-    powerload: this.application.resources.getAudio('powerload'),
-    impactmetal: this.application.resources.getAudio('impactmetal'),
-    bigimpact: this.application.resources.getAudio('bigimpact'),
+    music: resources.getAudio('music'),
+    engine: resources.getAudio('engine'),
+    impactwave: resources.getAudio('impactwave'),
+    powerload: resources.getAudio('powerload'),
+    impactmetal: resources.getAudio('impactmetal'),
+    bigimpact: resources.getAudio('bigimpact'),
   }
   
   initMuteButton() {

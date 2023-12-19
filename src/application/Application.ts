@@ -1,4 +1,3 @@
-import {Resources} from "./resources/Resources";
 import {MouseControl} from "./controls/MouseControl";
 import {Camera} from "./Camera";
 import {Renderer} from "./Renderer";
@@ -28,7 +27,7 @@ export class Application {
    debug?: dat.GUI;
    stats?: Stats;
    
-  constructor(public resources: Resources, enableTouchInterface = false) {
+  constructor() {
     if(location.hash === '#debug') {
       this.setDebug();
     }
@@ -49,13 +48,8 @@ export class Application {
     this.adjustFOV();
 
     
-    this.time.on('tick', () => {
-      this.update();
-    });
-    
-    this.sizes.on('resize', () => {
-        this.resize();
-    });
+    this.time.on('tick', this.update);
+    this.sizes.on('resize', this.resize);
   }
   
   private adjustFOV = () => {
@@ -101,13 +95,13 @@ export class Application {
     }
   }
   
-  resize() {
+  resize = ()  => {
     this.camera.resize();
     this.renderer.resize();
     this.adjustFOV();
   }
   
-  update() {
+  update = () => {
     this.stats?.begin();
     
     this.mouseControl.updateRaycaster();

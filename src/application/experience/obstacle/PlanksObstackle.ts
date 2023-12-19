@@ -1,5 +1,6 @@
 import {Plank} from "./Plank";
 import {Application} from "../../Application";
+import {resources} from "../../resources/Resources";
 
 export class PlanksObstacle {
   private planks:  Plank[] = [];
@@ -11,7 +12,7 @@ export class PlanksObstacle {
   }
 
   private createPlanks() {
-    const meshes = this.application.resources.getGltf('plank_1').scene.children
+    const meshes = resources.getGltf('plank_1').scene.children
     meshes.forEach((mesh, i) => {
       const initPosition = { x: mesh.position.x, y: mesh.position.y - 0.2, z: mesh.position.z }
       this.planksData.push(initPosition)

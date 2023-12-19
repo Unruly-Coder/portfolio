@@ -1,4 +1,5 @@
 import {Application} from "../../Application";
+import {resources} from "../../resources/Resources";
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 
@@ -14,7 +15,7 @@ export class Map {
   }
   
   private createRoomObject3d() {
-    const map = this.application.resources.getGltf('map');
+    const map = resources.getGltf('map');
     this.instance = map.scene
   }
   

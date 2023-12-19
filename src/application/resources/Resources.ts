@@ -28,7 +28,7 @@ import EventEmitter from "eventemitter3";
  *  
  *  });
  */
-export class Resources extends EventEmitter {
+class Resources extends EventEmitter {
   
   private readonly loaders: { 
     textureLoader : TextureLoader 
@@ -153,3 +153,5 @@ export class Resources extends EventEmitter {
     return this.nrLoaded / this.nrToLoad;
   }
 }
+
+export const resources = new Resources();

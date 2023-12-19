@@ -1,9 +1,9 @@
 
 import './main.css';
 import {Application} from "./application/Application";
-import {Resources} from "./application/resources/Resources";
+import {resources} from "./application/resources/Resources";
 
-const resources = new Resources();
+
 const exploreButton = document.getElementById('button');
 const mouseHelper = document.getElementById('mouse-helper');
 const dialog = document.getElementById('dialog');
@@ -30,7 +30,7 @@ function explorationStartHandler(application:  Application, enableTouchInterface
 }
 
 function resourcesLoadedHandler() {
-  const application = new Application(resources);
+  const application = new Application();
   application.start();
   addBodyClass('resources-loaded');
   

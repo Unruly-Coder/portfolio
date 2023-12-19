@@ -6,6 +6,7 @@ import {
   IcosahedronGeometry, PlaneGeometry,
 } from "three";
 import {Application} from "../../../Application";
+import {resources} from "../../../resources/Resources";
 import { Tween,  Easing} from "@tweenjs/tween.js";
 import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
 
@@ -28,7 +29,7 @@ export abstract class ActiveElement {
   isVisible: boolean = true;
   isFocused: boolean = false;
   constructor(protected application: Application, public link: { text: string, url: string}) {
-    enterMaterial.map = this.application.resources.getTexture('enter');
+    enterMaterial.map = resources.getTexture('enter');
     
     this.rock = new Mesh(rockGeometry, rockMaterial);
     this.text = this.createText(link.text);
@@ -50,7 +51,7 @@ export abstract class ActiveElement {
 
   private createText(text: string) {
     const textGeometry = new TextGeometry( text, {
-      font: this.application.resources.getFont('helvetiker'),
+      font: resources.getFont('helvetiker'),
       size: 0.35,
       height: 0,
       curveSegments: 6,

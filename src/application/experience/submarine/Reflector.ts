@@ -1,4 +1,5 @@
 import {Application} from "../../Application";
+import {resources} from "../../resources/Resources";
 import * as THREE from "three";
 
 export class Reflector {
@@ -43,9 +44,9 @@ export class Reflector {
       color: new THREE.Color( 0x7eeefc ),
       transparent: true,
       opacity: 0.1,
-      //fog:true,
-      map: this.application.resources.getTexture('lightRay'),
-      alphaMap: this.application.resources.getTexture('lightRay'),
+      fog:true,
+      map: resources.getTexture('lightRay'),
+      alphaMap: resources.getTexture('lightRay'),
       
     });
     
@@ -71,7 +72,7 @@ export class Reflector {
     spotLight.target.position.x = 0;
 
     spotLight.angle = angle;
-    spotLight.map = this.application.resources.getTexture('flashlightLight');
+    spotLight.map = resources.getTexture('flashlightLight');
     
     this.spotLight = spotLight;
 

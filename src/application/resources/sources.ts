@@ -23,10 +23,10 @@ export const textures = {
 } as const 
 
 export const gltfs: Record<string, GltfSource> = {
-  room: {
-    name: 'room',
+  map: {
+    name: 'map',
     type: 'gltf',
-    url: '/models/test-room.glb',
+    url: '/models/map.glb',
   },
   plank_1: {
     name: 'plank_1',

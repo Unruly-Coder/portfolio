@@ -1,6 +1,5 @@
 import {
   Vector3,
-  Mesh,
   Object3D,
 } from "three";
 import * as THREE from "three";
@@ -9,24 +8,6 @@ import {Reflector} from "./Reflector";
 import * as CANNON from "cannon-es";
 import {Bubbles} from "./Bubbles";
 import EventEmitter from "eventemitter3";
-
-
-// const coneMaterial =new THREE.MeshBasicMaterial({
-//   color: new THREE.Color( 0x000000 ),
-//   transparent: false,
-//   fog:true,
-// });
-//
-// const coneGeometry =  new THREE.CylinderGeometry(
-//   0.1,
-//   0.07,
-//   0.2,
-//   16,
-//   1,
-//   false,
-//   Math.PI,
-//   Math.PI * 2
-// );
 
 export class Submarine extends EventEmitter {
 
@@ -58,26 +39,11 @@ export class Submarine extends EventEmitter {
     this.createSubmarineObject3d();
     this.createSubmarinePhysicBody();
     this.createBubbles();
-    //this.syncObject3d();
+
   }
   
   private createSubmarineObject3d() {
     this.directionArrow = new THREE.ArrowHelper(this.direction, new Vector3(0,0,0), 2, 0xff0000);
-
-
-    const geometry =   new THREE.SphereGeometry( this.submarineRadius, 16, 16, Math.PI, Math.PI * 2, Math.PI * 0.15, Math.PI * 0.66 );
-    const material = new THREE.MeshPhongMaterial({
-      color: 'yellow',
-      transparent: false,
-      opacity: 1,
-      
-      side: THREE.DoubleSide,
-    });
-
-
-    geometry.rotateX(Math.PI * 0.5);
-
-    // this.submarine = new Mesh(geometry, material);
     this.submarine = this.application.resources.getGltf('submarine').scene;
     
     //orange color  0xffa500
@@ -103,52 +69,7 @@ export class Submarine extends EventEmitter {
 
     this.submarine.add(this.bench);
     this.submarine.add(this.reflector.instance);
-    
-    const bubbleCone1 = this.createBubbleCone();
-    const bubbleCone2 = this.createBubbleCone();
-    const bubbleCone3 = this.createBubbleCone();
 
-    
-    bubbleCone1.mesh.position.x = Math.cos(Math.PI * 0.25) * this.submarineRadius * 1.1;
-    bubbleCone1.mesh.position.y = Math.sin(Math.PI * 0.25) * this.submarineRadius * 1.1;
-    
-    bubbleCone2.mesh.position.x = Math.cos(0) * this.submarineRadius * 1.1;
-    bubbleCone2.mesh.position.y = Math.sin(0) * this.submarineRadius * 1.1;
-    
-    bubbleCone3.mesh.position.x = Math.cos(Math.PI * 1.75) * this.submarineRadius * 1.1;
-    bubbleCone3.mesh.position.y = Math.sin(Math.PI * 1.75) * this.submarineRadius * 1.1;
-
-    bubbleCone1.mesh.rotation.z = Math.PI * 0.75;
-    bubbleCone2.mesh.rotation.z = Math.PI * 0.5;
-    bubbleCone3.mesh.rotation.z = Math.PI * 0.25;
-    
-    const rightBubbleConeGroup1 = new THREE.Group();
-    rightBubbleConeGroup1.add(bubbleCone1.mesh);
-    rightBubbleConeGroup1.add(bubbleCone2.mesh);
-    rightBubbleConeGroup1.add(bubbleCone3.mesh);
-
-    const rightBubbleConeGroup2 = rightBubbleConeGroup1.clone();
-    
-    rightBubbleConeGroup1.rotation.y = Math.PI * -0.25;
-    rightBubbleConeGroup2.rotation.y = Math.PI * 0.25;
-    
-    const leftBubbleConeGroup1 = rightBubbleConeGroup1.clone();
-    const leftBubbleConeGroup2 = rightBubbleConeGroup2.clone();
-    
-    leftBubbleConeGroup1.rotation.y = Math.PI * 1.25;
-    leftBubbleConeGroup2.rotation.y = Math.PI * -1.25;
-    
-    
-    this.submarine.add(rightBubbleConeGroup1);
-    this.submarine.add(rightBubbleConeGroup2);
-    this.submarine.add(leftBubbleConeGroup1);
-    this.submarine.add(leftBubbleConeGroup2);
-    
-
-    //const group = new THREE.Group();
-
-    // group.add(this.directionArrow);
-    // group.add(this.submarine);
     this.submarine.position.set(this.initialPosition.x, this.initialPosition.y, this.initialPosition.z);
     
     this.instance = this.submarine;
@@ -169,11 +90,6 @@ export class Submarine extends EventEmitter {
   private createBubbles() {
     this.bubbles = new Bubbles(this.application, this);
     this.submarine.add(this.bubbles.instance);
-  }
-  
-  private createBubbleCone() {
-    const mesh = new Object3D()//new Mesh(coneGeometry, coneMaterial);
-    return { mesh };
   }
   
   private adjustForce() {
@@ -318,7 +234,6 @@ export class Submarine extends EventEmitter {
   }
 
   update() {
-
     
     if(this.isExtraPowerLoading) {
       this.loadExtraPower();

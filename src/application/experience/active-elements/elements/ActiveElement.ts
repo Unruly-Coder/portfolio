@@ -10,10 +10,10 @@ import { Tween,  Easing} from "@tweenjs/tween.js";
 import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
 
 const rockGeometry = new IcosahedronGeometry( 0.5, 0);
-const rockMaterial = new MeshLambertMaterial( { color: 0xffffff, fog: true,  });
-const textMaterial = new MeshBasicMaterial( { color: 0xffffff, fog: true,  });
+const rockMaterial = new MeshLambertMaterial( { color: 0xffffff, fog: true, transparent: false});
+const textMaterial = new MeshBasicMaterial( { color: 0xffffff, fog: true, transparent: false});
 const enterGeometry = new PlaneGeometry( 1, 1, 1 );
-const enterMaterial = new MeshBasicMaterial( { side: 2, transparent: true});
+const enterMaterial = new MeshBasicMaterial( { side: 2, transparent: true, });
 
 export abstract class ActiveElement { 
   instance: Object3D = new Object3D();
@@ -52,13 +52,9 @@ export abstract class ActiveElement {
     const textGeometry = new TextGeometry( text, {
       font: this.application.resources.getFont('helvetiker'),
       size: 0.35,
-      height: 0.1,
+      height: 0,
       curveSegments: 6,
       bevelEnabled: false,
-      bevelThickness: 2,
-      bevelSize: 2,
-      bevelOffset: 0,
-      bevelSegments: 2,
     } );
 
     textGeometry.center();

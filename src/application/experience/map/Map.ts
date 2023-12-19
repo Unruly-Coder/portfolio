@@ -14,15 +14,14 @@ export class Map {
   }
   
   private createRoomObject3d() {
-    const room = this.application.resources.getGltf('room');
-    this.instance = room.scene
+    const map = this.application.resources.getGltf('map');
+    this.instance = map.scene
   }
   
   private createRoomPhysicBody() {
     const modelOffset = 3 * 0.5;
     
-   // const floor = new CANNON.Plane();
-    const floor = new CANNON.Box(new CANNON.Vec3(12.4, 0.2, 6));
+    const floor = new CANNON.Box(new CANNON.Vec3(12.7, 0.2, 6));
     const ceiling = new CANNON.Box(new CANNON.Vec3(15.5, 0.5, 6));
     const wallRight = new CANNON.Box(new CANNON.Vec3(0.5, 3.5 + 4.5, 6));
     const wallLeft = new CANNON.Box(new CANNON.Vec3(0.5, 3.5 + 4.5, 6));
@@ -50,13 +49,13 @@ export class Map {
       wallRightBody.position.set(-modelOffset + 30 , 3.5 - 4.5,  0);
       wallLeftBody.position.set(-modelOffset - 1, 3.5 - 4.5, 0);
       ceilingBody.position.set(-modelOffset + 15, 7.5, 0);
-      floorBody.position.set(-modelOffset + 12.4, -0.1, 0);
+      floorBody.position.set(-modelOffset + 12.1, -0.1, 0);
       
       floor2RightBody.position.set(-modelOffset + 23, -16.5, 0);
       floor2LeftBody.position.set(-modelOffset + 1.4, -16.5, 0);
 
-    floor3RightBody.position.set(13.5, -3 - 24, 0);
-    floor3LeftBody.position.set(3.5, -3 - 24, 0);
+    floor3RightBody.position.set(13.4, -3 - 24, 0);
+    floor3LeftBody.position.set(3.6, -3 - 24, 0);
     
     lastFloorBody.position.set(-modelOffset + 15, -3 - 27.5, 0);
     

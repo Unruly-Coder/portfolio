@@ -73,7 +73,6 @@ export class Resources extends EventEmitter {
       const source: TextureSource = textures[key];
       
       this.loaders.textureLoader.load(prefix + source.url, (texture) => {
-        texture.colorSpace = 'srgb'
         this.textureItems[key] = texture;
         this.incrementLoaded();
       }, undefined, 

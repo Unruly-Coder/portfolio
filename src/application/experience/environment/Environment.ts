@@ -47,29 +47,29 @@ export class Environment {
           .onChange(() => {
             this.fog.color.set(this.colors.fog)
           })
-      
+
         folder
           .add(this.ambientLight, 'intensity', 0, 1)
           .name('amb intensity')
-        
+
         folder
           .addColor(this.colors, 'ambientLight')
           .name('amb color')
           .onChange(() => {
             this.ambientLight.color.set(this.colors.ambientLight)
           })
-      
+
         folder
           .add(this.hemisphereLight, 'intensity', 0, 1)
           .name('hem intensity')
-      
+
         folder
           .addColor(this.colors, 'hemisphereLight')
           .name('hem sky color')
           .onChange(() => {
             this.hemisphereLight.color.set(this.colors.hemisphereLight)
           })
-        
+
         folder
           .addColor(this.colors, 'hemisphereGroundLight')
           .name('hem ground color')

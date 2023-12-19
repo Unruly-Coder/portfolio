@@ -17,7 +17,7 @@ import {Application} from "../../../Application";
 
 export class BubbleEmitter {
 
-  instance!: Object3D;
+  instance: Object3D = new Object3D();
   
   private readonly worldPosition = new Vector3();
   
@@ -36,26 +36,7 @@ export class BubbleEmitter {
   
   private worldQuaternion = new Quaternion();
   private emitterDirectionVector = new Vector3(0,0, 1);
-  constructor(private application: Application) {
-    this.initBubbleEmitter();
-  }
-
-  private initBubbleEmitter() {
-    const boxSize = 0.3;
-
-    const group = new Object3D();
-    // const boxGeometry = new BoxGeometry( boxSize, boxSize, boxSize );
-    // const boxMaterial = new MeshBasicMaterial( {color: 0x00ff00, wireframe: true} );
-    // const box = new Mesh( boxGeometry, boxMaterial );
-    // box.position.set(boxSize/2 * -1, boxSize/2 * -1, boxSize/2 * -1);
-    //
-    // const arrowHelper = new ArrowHelper(
-    //   new Vector3(0,0,-1),
-    //   new Vector3(0,0,0), 0.5, 'red');
-    // box.add(arrowHelper);
-
-    this.instance = group;
-  }
+  constructor(private application: Application) {}
   
   private getEmitterPosition() {
     return  this.instance.getWorldPosition(this.worldPosition);
@@ -100,8 +81,7 @@ export class BubbleEmitter {
       depthWrite:false,
       transparent: true,
       precision: 'lowp',
-      
-    } );
+    });
     
     this.bubbles = new Points(geometry, this.material);
     this.bubbles.frustumCulled = false;
@@ -121,21 +101,21 @@ export class BubbleEmitter {
     this.isEmitting = false;
   }
 
-  get emitterDirection() {
+  getEmitterDirection() {
     this.emitterDirectionVector.set(0,0,1);
     this.instance.getWorldQuaternion(this.worldQuaternion);
     this.emitterDirectionVector.applyQuaternion(this.worldQuaternion);
     return this.emitterDirectionVector;
   }
 
-  private emitBubble(bubbleIndex: number) {
+  private emitBubble(bubbleIndex: number, emitterPosition: Vector3) {
     if(!this.bubbles) return;
     
     this.bubblesAge[bubbleIndex] = 0;
     this.lastEmitTime = this.application.time.getElapsedTime();
 
     const positionIndex = bubbleIndex * 3;
-    const emitterPosition = this.getEmitterPosition();
+ 
     this.bubbles.geometry.attributes.position.array[positionIndex] = emitterPosition.x;
     this.bubbles.geometry.attributes.position.array[positionIndex + 1] = emitterPosition.y;
     this.bubbles.geometry.attributes.position.array[positionIndex + 2] = emitterPosition.z;
@@ -145,6 +125,8 @@ export class BubbleEmitter {
     if(this.bubbles && this.material) {
       
       this.material.uniforms.uTime.value = this.application.time.getElapsedTime();
+      const emitterPosition = this.getEmitterPosition();
+      const emitterDirection = this.getEmitterDirection();
       
       for(let i = 0; i < this.nrOfBubbles; i++) {
         let emitted= 0;
@@ -163,7 +145,7 @@ export class BubbleEmitter {
           (this.lastEmitTime === 0 || intervalReached);
         
         if(canEmit) {
-          this.emitBubble(i);
+          this.emitBubble(i, emitterPosition);
           emitted++;
         }
         
@@ -176,16 +158,14 @@ export class BubbleEmitter {
           this.bubbles.geometry.attributes.color.needsUpdate = true;
         } else {
           const positionIndex = i * 3;
-          // const emitterPosition = this.getEmitterPosition();
-
 
           const speed = deltaTime * this.bubblesRandom[i] * 3;
           const v = Math.sin(this.bubblesRandom[i] * elapsedTime) * 0.1;
           const v2 = Math.cos(this.bubblesRandom[i] * elapsedTime) * 0.3;
       
-          this.bubbles.geometry.attributes.position.array[positionIndex] -=  (v + this.emitterDirection.x) * speed;
-          this.bubbles.geometry.attributes.position.array[positionIndex + 1] -= (v2 + this.emitterDirection.y) * speed;
-          this.bubbles.geometry.attributes.position.array[positionIndex + 2] -= (v + this.emitterDirection.z) * speed;
+          this.bubbles.geometry.attributes.position.array[positionIndex] -=  (v + emitterDirection.x) * speed;
+          this.bubbles.geometry.attributes.position.array[positionIndex + 1] -= (v2 + emitterDirection.y) * speed;
+          this.bubbles.geometry.attributes.position.array[positionIndex + 2] -= (v + emitterDirection.z) * speed;
           this.bubbles.geometry.attributes.position.needsUpdate = true;
 
 

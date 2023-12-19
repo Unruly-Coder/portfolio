@@ -6,6 +6,7 @@ import {Resources} from "./application/resources/Resources";
 const resources = new Resources();
 const exploreButton = document.getElementById('button');
 const mouseHelper = document.getElementById('mouse-helper');
+const dialog = document.getElementById('dialog');
 
 
 setProgress(0);
@@ -19,6 +20,12 @@ function addBodyClass(className: string) {
 }
 function explorationStartHandler(application:  Application, enableTouchInterface = false) {
   addBodyClass('exploration-started');
+  
+  if(dialog) {
+      setTimeout(() => {
+        dialog.style.setProperty('display', 'none');
+      }, 3000);
+    }
   application.experienceStart(enableTouchInterface);
 }
 
@@ -31,7 +38,10 @@ function resourcesLoadedHandler() {
     explorationStartHandler(application)
     mouseHelper?.style.setProperty('opacity', '1');
   });
-  exploreButton?.addEventListener('touchend', () => explorationStartHandler(application, true));
+  
+  exploreButton?.addEventListener('touchend', () => {
+    explorationStartHandler(application, true)
+  });
   
 }
 

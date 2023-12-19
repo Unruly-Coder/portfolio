@@ -1,18 +1,14 @@
-import {Box3, Group, Object3D, Vector3} from "three";
+import {Box3, Object3D, Vector3} from "three";
 import * as CANNON from "cannon-es";
-import {BodyPhysicalHelper} from "../../utils/BodyPhysicalHelper";
 import {Application} from "../../Application";
 
 export class Plank {
-  private bodyObject3D: Object3D;
-  private bodyPhysical: CANNON.Body;
+  private readonly bodyObject3D: Object3D;
+  private readonly bodyPhysical: CANNON.Body;
   private force: CANNON.Vec3 = new CANNON.Vec3(0, -0.3, 0);
   private isForceApplied: boolean = false;
   
   constructor(private application: Application, private model: Object3D) {
-    
-
-
     this.bodyObject3D = model;
     this.bodyPhysical = this.createPhysicalBody();
   }
@@ -29,8 +25,6 @@ export class Plank {
   addBodyToPhysicalWorld() {
     this.application.physicWorld.addBody(this.bodyPhysical);
   }
-  
-  
   
   update() {
     if(this.isForceApplied) {
@@ -61,18 +55,13 @@ export class Plank {
       sizeVector.x / 2,
       sizeVector.y / 2,
       sizeVector.z / 2));
-    
 
-
-    const body = new CANNON.Body({
+    return new CANNON.Body({
       mass: 1,
       shape: box,
       allowSleep: true,
       sleepSpeedLimit: 0.1,
     });
-    
-    
-    return body;
   }
   
  

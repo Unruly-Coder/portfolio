@@ -48,7 +48,7 @@ export class Bubbles {
  
         if(this.isBubbling) {
           
-          if(this.submarine.direction.dot(bubbleEmitter.emitterDirection) > 0.05) {
+          if(this.submarine.direction.dot(bubbleEmitter.getEmitterDirection()) > 0.05) {
             bubbleEmitter.startEmitting();
           } else {
             bubbleEmitter.stopEmitting();

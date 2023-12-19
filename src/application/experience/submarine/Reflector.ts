@@ -22,7 +22,7 @@ export class Reflector {
   
   createReflector() {
     const lampGeometry = new THREE.SphereGeometry( 0.15, 8, 8, Math.PI, Math.PI * 2, 0, Math.PI * 0.5 );
-    const lampMaterial = new THREE.MeshStandardMaterial({
+    const lampMaterial = new THREE.MeshLambertMaterial({
       color: 'black',
     });
     const lampMesh = new THREE.Mesh(lampGeometry, lampMaterial);
@@ -59,7 +59,7 @@ export class Reflector {
     
     
     
-    const spotLight = new THREE.SpotLight( this.colors.spotlightColor, 100 );//0x7eeefc
+    const spotLight = new THREE.SpotLight( this.colors.spotlightColor, 100 , 15);//0x7eeefc
     spotLight.penumbra = 1;
 
     spotLight.position.y = 0;

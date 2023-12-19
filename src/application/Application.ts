@@ -44,6 +44,7 @@ export class Application {
     this.camera = new Camera(this);
     this.experience = new Experience(this);
     this.renderer = new Renderer(this);
+   
     
     this.adjustFOV();
 
@@ -112,6 +113,7 @@ export class Application {
     this.mouseControl.updateRaycaster();
     this.experience.update();
     this.renderer.update();
+    
 
     Tween.update();
     

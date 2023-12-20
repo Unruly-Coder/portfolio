@@ -17,17 +17,20 @@ export class ActiveElements {
     private getRangeFactor: (element: Object3D, data: { range: number, distance: number}) => { range: number, distance: number},
     private getDistance2d: (element: Object3D) => number,
     )  {
-    const github = new Github(application);
-    github.addInstanceToScene();
-    github.setPosition(9, -3, 0);
+
 
     const linkedin = new Linkedin(application);
     linkedin.addInstanceToScene();
-    linkedin.setPosition(9, -7, 0);
+    linkedin.setPosition(8, -3, 0);
+
+
+    const github = new Github(application);
+    github.addInstanceToScene();
+    github.setPosition(8, -6, 0);
 
     const mail = new Mail(application);
     mail.addInstanceToScene();
-    mail.setPosition(9, -11, 0);
+    mail.setPosition(8, -9, 0);
     
     this.activeElements.set(github.instance, github);
     this.activeElements.set(linkedin.instance, linkedin);
@@ -37,7 +40,10 @@ export class ActiveElements {
     
     document.addEventListener('keydown', (event) => {
       if(event.key === 'Enter' && this.focusedElement) {
-        window.open(this.focusedElement.link.url, '_blank');
+        const win =  window.open(this.focusedElement.link.url, '_blank');
+        if(!win) {
+          alert('Please allow popups for this website');
+        }
       }
     });
   }

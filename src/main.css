@@ -248,6 +248,11 @@ canvas {
     &.power-move-button {
         bottom: 110px
     }
+    
+    &.enter-button {
+        bottom: 65px;
+        right: 95px;
+    }
 }
 
 .joystick-button {

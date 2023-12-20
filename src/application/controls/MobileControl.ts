@@ -6,6 +6,7 @@ export class MobileControl extends EventEmitter {
   
   private driveButton = document.createElement('button');
   private powerMoveButton = document.createElement('button');
+  private enterButton = document.createElement('button');
   private joystick = document.createElement('button');
   private isEnabled = false;
   
@@ -14,6 +15,7 @@ export class MobileControl extends EventEmitter {
     super();
     this.initDriveButton();
     this.initPowerMoveButton();
+    this.initEnterButton()
     this.initJoystick();
 
     window.addEventListener('touchmove', ev => {
@@ -29,7 +31,8 @@ export class MobileControl extends EventEmitter {
   enable() {
     this.showButton(this.driveButton);
     this.showButton(this.powerMoveButton);
-    this.showButton(this.joystick)
+    this.showButton(this.enterButton);
+    this.showButton(this.joystick);
     this.isEnabled = true;
   }
   
@@ -37,6 +40,7 @@ export class MobileControl extends EventEmitter {
     if(this.isEnabled) {
       this.hideButton(this.driveButton);
       this.hideButton(this.powerMoveButton);
+      this.hideButton(this.enterButton);
       this.hideButton(this.joystick);
       this.isEnabled = false;
     }
@@ -88,6 +92,24 @@ export class MobileControl extends EventEmitter {
       this.emit('stop-power');
     }, false);
     document.body.appendChild(this.powerMoveButton);
+  }
+  
+  initEnterButton() {
+    this.enterButton.innerHTML = 'ENTER';
+    this.enterButton.classList.add('enter-button', 'mobile-button');
+    
+    this.hideButton(this.enterButton);
+    
+    this.enterButton.addEventListener('touchstart', (event) => {
+      event.preventDefault();
+      this.enterButton.classList.add('pressed');
+      document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter'}));
+    }, false);
+    this.enterButton.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      this.enterButton.classList.remove('pressed');
+    }, false);
+    document.body.appendChild(this.enterButton);
   }
   
   private setDirection(x: number, y: number) {

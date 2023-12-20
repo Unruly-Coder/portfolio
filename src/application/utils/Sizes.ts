@@ -60,7 +60,7 @@ export class Sizes extends EventEmitter {
   }
   
   get allowedPixelRatio() {
-    return Math.min(this.pixelRatio, 2);
+    return Math.min(this.pixelRatio, 1.7);
   }
   
 }

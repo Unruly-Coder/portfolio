@@ -9,7 +9,7 @@ export class Environment {
   
   private readonly colors = {
     background: 0x000000,
-    fog: 0x395050,// 0x161F1F,
+    fog: 0x394e50,// 0x161F1F,
     ambientLight: 0x404040,
     hemisphereLight: 0xffffff,
     hemisphereGroundLight: 0x153232,

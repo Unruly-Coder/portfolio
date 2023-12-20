@@ -9,9 +9,10 @@ export class Reflector {
   private lampWorldDirection: THREE.Vector3 = new THREE.Vector3(0,-1,0);
   private lampWorldPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
   private lightedObjectPosition = new THREE.Vector3(0,0,0);
-  private colors = { spotlightColor: 0x7eeefc };
+  private colors = { spotlightColor: 0xa8efff };
   private spotLight!: THREE.SpotLight;
   private cone!: THREE.Mesh;
+  private coneMaterial!: THREE.MeshBasicMaterial;
 
   private lastTargetLightBeamRotation = 0;
   
@@ -28,7 +29,7 @@ export class Reflector {
     });
     const lampMesh = new THREE.Mesh(lampGeometry, lampMaterial);
     
-    const coneHeight = 11;
+    const coneHeight = 9;
     const angle = Math.PI / 4;
   const coneGeometry =  new THREE.CylinderGeometry(
       0.1,
@@ -41,13 +42,12 @@ export class Reflector {
       Math.PI);
   
     const coneMaterial =new THREE.MeshBasicMaterial({
-      color: new THREE.Color( 0x7eeefc ),
+      color: this.colors.spotlightColor,
       transparent: true,
-      opacity: 0.1,
+      opacity: 0.09,
       fog:true,
       map: resources.getTexture('lightRay'),
       alphaMap: resources.getTexture('lightRay'),
-      
     });
     
     
@@ -58,9 +58,10 @@ export class Reflector {
    cone.position.y = -1 * coneHeight / 2;
    cone.rotation.y = Math.PI ;
     
+   this.coneMaterial = coneMaterial;
     
     
-    const spotLight = new THREE.SpotLight( this.colors.spotlightColor, 100 , 15);//0x7eeefc
+    const spotLight = new THREE.SpotLight( this.colors.spotlightColor, 250, 30);//0x7eeefc
     spotLight.penumbra = 1;
 
     spotLight.position.y = 0;
@@ -121,7 +122,8 @@ export class Reflector {
         folder.addColor(this.colors, 'spotlightColor')
           .name('light color')
           .onChange(() => {
-            this.spotLight.color.set(this.colors.spotlightColor)
+            this.spotLight.color.set(this.colors.spotlightColor);
+            this.coneMaterial.color.set(this.colors.spotlightColor);
           })
     }
   }

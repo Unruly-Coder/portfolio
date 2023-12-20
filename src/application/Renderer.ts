@@ -17,14 +17,14 @@ export class Renderer {
       canvas: document.querySelector('canvas#canvas')!,
       antialias: false,
       depth: false,
-      alpha: false,
+      alpha: true,
       stencil: false,
       powerPreference: 'high-performance'
 
     });
 
     this.renderer.outputColorSpace = SRGBColorSpace;
-    this.renderer.shadowMap.enabled = true
+    this.renderer.shadowMap.enabled = false
     this.renderer.shadowMap.type = PCFSoftShadowMap
     this.renderer.setSize(this.application.sizes.width, this.application.sizes.height);
     this.renderer.setPixelRatio(this.application.sizes.allowedPixelRatio);
@@ -39,18 +39,16 @@ export class Renderer {
     const renderPass = new RenderPass(this.application.scene, this.application.camera.instance);
     this.effectComposer.addPass(renderPass);
 
-
-
-
-    //film pass
-    const filmPass = new FilmPass(0.6);
+    // const smaaPass = new SMAAPass(this.application.sizes.width, this.application.sizes.height);
+    // this.effectComposer.addPass(smaaPass);
+    
+    const filmPass = new FilmPass(0.7);
     this.effectComposer.addPass(filmPass);
-  
+    
     const outputPass = new OutputPass();
     this.effectComposer.addPass( outputPass );
   
-    const smaaPass = new SMAAPass(this.application.sizes.width, this.application.sizes.height);
-    this.effectComposer.addPass(smaaPass);
+
   }
   
   resize() {
@@ -62,7 +60,6 @@ export class Renderer {
   }
   
   update() {
-    //this.renderer.render(this.application.scene, this.application.camera.instance);
     this.effectComposer.render();
   }
 }

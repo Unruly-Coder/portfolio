@@ -1,10 +1,12 @@
 import {Application} from "../../Application";
 import {resources} from "../../resources/Resources";
 import * as THREE from "three";
+import {Group} from "three";
 
 export class Reflector {
   
   instance: THREE.Group = new THREE.Group();
+  private lampInstance: THREE.Group = new THREE.Group();
   private direction: THREE.Vector3 = new THREE.Vector3(0,-1,0);
   private lampWorldDirection: THREE.Vector3 = new THREE.Vector3(0,-1,0);
   private lampWorldPosition: THREE.Vector3 = new THREE.Vector3(0,0,0);
@@ -28,6 +30,21 @@ export class Reflector {
       color: 'black',
     });
     const lampMesh = new THREE.Mesh(lampGeometry, lampMaterial);
+    
+    
+    
+    const handle = new Group();
+    const handlerGeometry = new THREE.BoxGeometry(0.1, 0.3, 0.1);
+    const handlerGeometry2 = new THREE.BoxGeometry(0.3, 0.07, 0.07);
+    const handleMesh = new THREE.Mesh(handlerGeometry, lampMaterial);
+    const handleMesh2 = new THREE.Mesh(handlerGeometry2, lampMaterial);
+    handleMesh.position.y = 0.11;
+    handleMesh.position.x = -0.4;
+    handleMesh.rotation.z = Math.PI / 4;
+    
+    handleMesh2.position.x = -0.17;
+    handle.add(handleMesh);
+    handle.add(handleMesh2);
     
     const coneHeight = 9;
     const angle = Math.PI / 4;
@@ -103,10 +120,13 @@ export class Reflector {
     this.spotLight = spotLight;
 
     
-    this.instance.add(spotLight);
-    this.instance.add(spotLight.target);
-    this.instance.add(cone);
-    this.instance.add(lampMesh);
+    this.lampInstance.add(spotLight);
+    this.lampInstance.add(spotLight.target);
+    this.lampInstance.add(cone);
+    this.lampInstance.add(lampMesh);
+
+    this.instance.add(handle);
+    this.instance.add(this.lampInstance);
     this.instance.position.y = this.offsetY;
     
 
@@ -176,7 +196,7 @@ export class Reflector {
     const lampRadius = Math.abs(this.offsetY)
 
     
-    this.instance.rotation.z = Math.min(Math.max(-Math.PI / 3, Math.atan2(this.direction.y, Math.abs(this.direction.x))), Math.PI / 5) + Math.PI / 2;
+    this.lampInstance.rotation.z = Math.min(Math.max(-Math.PI / 3, Math.atan2(this.direction.y, Math.abs(this.direction.x))), Math.PI / 5) + Math.PI / 2;
     
     const targetY = this.direction.x > 0 ? 0 : Math.PI;
     const rotationYDifference = Math.abs(targetY - this.instance.rotation.y);

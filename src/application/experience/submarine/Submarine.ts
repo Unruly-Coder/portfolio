@@ -46,8 +46,7 @@ export class Submarine extends EventEmitter {
   private createSubmarineObject3d() {
     this.directionArrow = new THREE.ArrowHelper(this.direction, new Vector3(0,0,0), 2, 0xff0000);
     this.submarine = resources.getGltf('submarine').scene;
-    
-    //orange color  0xffa500
+
     
     
     const submarinePointLight = new THREE.PointLight(0x7eeefc, 0.2);
@@ -63,7 +62,7 @@ export class Submarine extends EventEmitter {
     this.bench = resources.getGltf('character').scene;
     this.bench.position.y = -0.3;
     
-    this.reflector = new Reflector(this.application, -1);
+    this.reflector = new Reflector(this.application, -1.02);
     
     
     

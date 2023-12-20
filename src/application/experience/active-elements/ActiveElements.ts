@@ -58,8 +58,11 @@ export class ActiveElements {
       const activeElement = this.activeElements.get(instance);
       
       if(!activeElement) return;
-   
-      if(elementRange.range > threshold && elementRange.range > range) {
+      
+      const elementInFrustum = this.application.camera.checkIfInFrustum(activeElement.instance.position)
+      const cameraPositionOn2Floor = this.application.camera.instance.position.y < 0;
+
+      if(cameraPositionOn2Floor && elementInFrustum && elementRange.range > threshold && elementRange.range  > range) {
         range = elementRange.range;
         focusedElementCandidate = activeElement;
       } 

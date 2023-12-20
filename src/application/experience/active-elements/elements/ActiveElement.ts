@@ -44,7 +44,7 @@ export abstract class ActiveElement {
     this.text.scale.set(0,0,0);
     this.instance.add(this.enter);
     this.enter.position.y = -1.2;
-    this.enter.scale.set(1,1,1);
+    this.enter.scale.set(0,0,0);
     this.instance.add( this.rock );
 
   }

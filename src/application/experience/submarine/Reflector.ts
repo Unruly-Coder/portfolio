@@ -35,12 +35,12 @@ export class Reflector {
       0.1,
     coneHeight * Math.tan(angle) * 0.55,
       coneHeight,
-      128,
+      64,
       1,
       true,
       Math.PI/2,
       Math.PI);
-  
+
     const coneMaterial =new THREE.MeshBasicMaterial({
       color: this.colors.spotlightColor,
       transparent: true,
@@ -48,6 +48,25 @@ export class Reflector {
       fog:true,
       map: resources.getTexture('lightRay'),
       alphaMap: resources.getTexture('lightRay'),
+    });
+
+    const coneGeometry2 =  new THREE.CylinderGeometry(
+      0.1,
+      coneHeight * Math.tan(angle) * 0.85,
+      coneHeight,
+      64,
+      1,
+      true,
+      Math.PI/2,
+      Math.PI);
+    
+    const coneMaterial2 =new THREE.MeshBasicMaterial({
+      color: this.colors.spotlightColor,
+      transparent: true,
+      opacity: 0.03,
+      fog:true,
+      map: resources.getTexture('lightRay2'),
+      alphaMap: resources.getTexture('lightRay2'),
     });
     
     
@@ -58,6 +77,12 @@ export class Reflector {
    cone.position.y = -1 * coneHeight / 2;
    cone.rotation.y = Math.PI ;
     
+   const cone2 = new THREE.Mesh(
+      coneGeometry2,
+      coneMaterial2
+      );
+   
+   cone.add(cone2);
    this.coneMaterial = coneMaterial;
     
     

@@ -1,17 +1,20 @@
 import * as THREE from "three";
 import {Application} from "./Application";
+import {Vector3} from "three";
 
 export class Camera {
   
   readonly instance: THREE.PerspectiveCamera
   readonly defaultFOV: number = 50;
   private readonly z: number = 13;
+
+  private frustum = new THREE.Frustum();
+  private projectionMatrix = new THREE.Matrix4();
   constructor(private application: Application) {
     this.instance = new THREE.PerspectiveCamera(this.defaultFOV, this.application.sizes.aspectRatio, 0.1, 30);
     this.instance.position.z = this.z;
     this.instance.position.y = 3;
     this.instance.position.x = 0;
-    
     
     this.setDebug()
   }
@@ -19,6 +22,13 @@ export class Camera {
   resize() {
     this.instance.aspect = this.application.sizes.aspectRatio;
     this.instance.updateProjectionMatrix();
+  }
+  
+  checkIfInFrustum(point: Vector3) {
+    this.frustum.setFromProjectionMatrix( 
+      this.projectionMatrix.multiplyMatrices(this.instance.projectionMatrix, this.instance.matrixWorldInverse)
+    );
+    return this.frustum.containsPoint(point);
   }
 
   reset() {

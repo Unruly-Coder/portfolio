@@ -124,7 +124,7 @@ canvas {
         font-size: min(0.7rem, 2.8vw);
         position: absolute;
         color: rgba(255, 255, 255, 0.5);
-        top: 20px;
+        top: 15px;
         right: 20px;
         text-align: center;
     }

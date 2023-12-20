@@ -10,6 +10,11 @@ export const textures = {
     type: 'texture',
     url: '/textures/beam.png',
   },
+  lightRay2: {
+    name: 'lightRay2',
+    type: 'texture',
+    url: '/textures/beam2.png',
+  },
   engineBubbles: {
     name: 'engineBubbles',
     type: 'texture',

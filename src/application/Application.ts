@@ -11,6 +11,7 @@ import * as CANNON from "cannon-es";
 import {Experience} from "./experience/Experience";
 import {MobileControl} from "./controls/MobileControl";
 import Tween from "@tweenjs/tween.js";
+import cannonDebugger from "cannon-es-debugger";
 
 export class Application {
 
@@ -26,6 +27,7 @@ export class Application {
    sound: Sound;
    debug?: dat.GUI;
    stats?: Stats;
+   cannonDebugger: { update: () => void }
    
   constructor() {
     if(location.hash === '#debug') {
@@ -43,8 +45,9 @@ export class Application {
     this.camera = new Camera(this);
     this.experience = new Experience(this);
     this.renderer = new Renderer(this);
-   
-    
+    this.cannonDebugger = cannonDebugger( this.scene, this.physicWorld)
+
+
     this.adjustFOV();
 
     
@@ -106,8 +109,9 @@ export class Application {
     
     this.mouseControl.updateRaycaster();
     this.experience.update();
+   // this.cannonDebugger.update();
     this.renderer.update();
-    
+   
 
     Tween.update();
     

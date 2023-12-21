@@ -3,6 +3,7 @@ import * as THREE from "three";
 
 export class Environment {
   
+  readonly defaultFogDensity: number = 0.05;
   private readonly fog: THREE.FogExp2;
   private readonly ambientLight: THREE.AmbientLight;
   private readonly hemisphereLight: THREE.HemisphereLight;
@@ -18,7 +19,7 @@ export class Environment {
   constructor(private application: Application) {
     
     this.application.scene.background = new THREE.Color( this.colors.background );
-    this.fog = new THREE.FogExp2( this.colors.fog, 0.05);//0.07);
+    this.fog = new THREE.FogExp2( this.colors.fog, this.defaultFogDensity);//0.07);
     
     this.application.scene.fog = this.fog;
 
@@ -29,6 +30,13 @@ export class Environment {
     this.application.scene.add(this.hemisphereLight);
     
     this.setDebug();
+  }
+  
+  get fogDensity() {
+    return this.fog.density;
+  }
+  set fogDensity(density: number) {
+    this.fog.density = density;
   }
   
   private setDebug() {

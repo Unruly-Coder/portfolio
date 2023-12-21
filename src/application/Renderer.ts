@@ -42,7 +42,7 @@ export class Renderer {
     // const smaaPass = new SMAAPass(this.application.sizes.width, this.application.sizes.height);
     // this.effectComposer.addPass(smaaPass);
     
-    const filmPass = new FilmPass(0.7);
+    const filmPass = new FilmPass(0.9);
     this.effectComposer.addPass(filmPass);
     
     const outputPass = new OutputPass();

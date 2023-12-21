@@ -6,13 +6,13 @@ export class Camera {
   
   readonly instance: THREE.PerspectiveCamera
   readonly defaultFOV: number = 50;
-  private readonly z: number = 13;
+   readonly defaultZ: number = 13;
 
   private frustum = new THREE.Frustum();
   private projectionMatrix = new THREE.Matrix4();
   constructor(private application: Application) {
-    this.instance = new THREE.PerspectiveCamera(this.defaultFOV, this.application.sizes.aspectRatio, 0.1, 30);
-    this.instance.position.z = this.z;
+    this.instance = new THREE.PerspectiveCamera(this.defaultFOV, this.application.sizes.aspectRatio, 0.1, 55);
+    this.instance.position.z = this.defaultZ;
     this.instance.position.y = 3;
     this.instance.position.x = 0;
     
@@ -34,7 +34,7 @@ export class Camera {
   reset() {
     this.instance.position.x = 0;
     this.instance.position.y = 3;
-    this.instance.position.z = this.z;
+    this.instance.position.z = this.defaultZ;
     this.instance.rotation.x = 0;
     this.instance.rotation.y = 0;
     this.instance.rotation.z = 0;

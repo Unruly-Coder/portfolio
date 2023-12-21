@@ -12,7 +12,7 @@ export class PlanksObstacle {
   }
 
   private createPlanks() {
-    const meshes = resources.getGltf('plank_1').scene.children
+    const meshes = resources.getGltf('plank_1').scene.clone().children
     meshes.forEach((mesh, i) => {
       const initPosition = { x: mesh.position.x, y: mesh.position.y - 0.2, z: mesh.position.z }
       this.planksData.push(initPosition)

@@ -17,8 +17,14 @@ export class Experience {
   private environment: Environment;
   private submarine!: Submarine;
   private map!: Map;
+  
   private dust!: Dust;
+  private dust2!: Dust;
+  private dust3!: Dust;
+  
   private obstacle1!: Obstacle;
+  private obstacle2!: Obstacle;
+  
   private activeElements!: ActiveElements;
   
   private mouseControl: MouseControl;
@@ -80,6 +86,11 @@ export class Experience {
     this.obstacle1.setPosition(25.5, 0, 0);
     this.obstacle1.addInstanceToScene();
     this.obstacle1.addBodyToPhysicalWorld();
+    
+    this.obstacle2 = new Obstacle(this.application);
+    this.obstacle2.setPosition(8.5, -29.8, 0);
+    this.obstacle2.addInstanceToScene();
+    this.obstacle2.addBodyToPhysicalWorld();
   }
   
   private setupSubmarine() {
@@ -91,8 +102,10 @@ export class Experience {
     this.submarine.on('velocityChange', (velocity) => {
       if(velocity > 6) {
         this.obstacle1.deactivate();
+        this.obstacle2.deactivate()
       } else {
         this.obstacle1.activate();
+        this.obstacle2.activate();
       }
     });
   }
@@ -150,16 +163,38 @@ export class Experience {
   }
   
   private setupDust() {
-    this.dust = new Dust(this.application,30,30,7, 500, 2);
+    this.dust = new Dust(this.application,30,15,7, 250, 2);
     this.dust.addInstanceToScene();
     this.dust.setPosition(-2, 7, 2);
+    
+    this.dust2 = new Dust(this.application,11,21,7, 150, 2);
+    this.dust2.addInstanceToScene();
+    this.dust2.setPosition(3, -8, 2);
+    
+    this.dust3 = new Dust(this.application,45,60,7, 650, 2);
+    this.dust3.addInstanceToScene();
+    this.dust3.setPosition(-10, -29, 2);
   }
   
   private syncCameraWithSubmarine() {
     const targetCameraPositionY = this.submarine.instance.position.y;
     const targetCameraPositionX = this.submarine.instance.position.x;
-    this.camera.instance.position.y += (targetCameraPositionY - this.camera.instance.position.y) * 0.08;
+    this.camera.instance.position.y += (targetCameraPositionY - this.camera.instance.position.y) * 0.04;
     this.camera.instance.position.x += (targetCameraPositionX - this.camera.instance.position.x) * 0.02;
+    
+    if(this.submarine.instance.position.y < -29.5) {
+      const targetCameraPositionZ = this.camera.defaultZ + 6;
+      const targetFogDensity = 0.03;
+      this.camera.instance.position.z += (targetCameraPositionZ - this.camera.instance.position.z) * 0.04;
+      this.environment.fogDensity += (targetFogDensity - this.environment.fogDensity) * 0.02
+    } else {
+      if(this.camera.instance.position.z > this.camera.defaultZ) {
+        const targetCameraPositionZ = this.camera.defaultZ;
+        const targetFogDensity = this.environment.defaultFogDensity;
+        this.camera.instance.position.z += (targetCameraPositionZ - this.camera.instance.position.z) * 0.04;
+        this.environment.fogDensity += (targetFogDensity - this.environment.fogDensity) * 0.02
+      }
+    }
   }
   
   private stepPhysics() {
@@ -175,6 +210,7 @@ export class Experience {
     this.dust.update();
     this.submarine.update();
     this.obstacle1.update();
+    this.obstacle2.update();
     this.activeElements.update();
     this.syncCameraWithSubmarine()
   }

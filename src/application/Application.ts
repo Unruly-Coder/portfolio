@@ -92,6 +92,7 @@ export class Application {
   
   experienceStart(enableTouchInterface = false) {
     this.experience.start();
+    this.sound.init();
 
     if(enableTouchInterface) {
       this.mobileControl.enable();

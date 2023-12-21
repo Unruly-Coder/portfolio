@@ -8,7 +8,7 @@ export class Sound {
   private audioButton = document.getElementById('audio');
   
   constructor(private application: Application) {
-    this.init();
+    this.toggleMute();
   }
   
   init() {
@@ -34,6 +34,7 @@ export class Sound {
     this.sounds.bigimpact.volume(0.5);
     
     this.initMuteButton();
+    this.toggleMute();
   }
   
   sounds = {
@@ -47,8 +48,9 @@ export class Sound {
   
   initMuteButton() {
     if(this.audioButton) {
-     this.audioButton.addEventListener('click', () => {
-        this.toggleMute();
+      this.audioButton.classList.add('visible');
+      this.audioButton.addEventListener('click', () => {
+            this.toggleMute();
       })
     }
   }

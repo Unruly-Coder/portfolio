@@ -207,11 +207,21 @@ export class Experience {
   
   update() {
     this.stepPhysics();
-    this.dust.update();
     this.submarine.update();
     this.obstacle1.update();
     this.obstacle2.update();
     this.activeElements.update();
+
+    this.dust.update();
+    
+    if(this.submarine.instance.position.y < 0 && this.submarine.instance.position.y > -29.5) {
+      this.dust2.update();
+    }
+    
+    if(this.submarine.instance.position.y < -29.5) {
+      this.dust3.update();
+    }
+    
     this.syncCameraWithSubmarine()
   }
 }

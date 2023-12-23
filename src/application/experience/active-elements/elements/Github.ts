@@ -1,8 +1,11 @@
-import {ActiveElement} from "./ActiveElement";
-import {Application} from "../../../Application";
+import { ActiveElement } from "./ActiveElement";
+import { Application } from "../../../Application";
 
 export class Github extends ActiveElement {
-    constructor(application: Application) {
-      super(application, {text: 'GITHUB', url: 'https://github.com/Crazy-Ivan'});
-    }
+  constructor(application: Application) {
+    super(application, {
+      text: "GITHUB",
+      url: "https://github.com/Crazy-Ivan",
+    });
+  }
 }

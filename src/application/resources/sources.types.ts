@@ -1,4 +1,4 @@
-export type SourceType = 'texture' | 'sound' | 'gltf' | 'font';
+export type SourceType = "texture" | "sound" | "gltf" | "font";
 
 interface BaseSource {
   name: string;
@@ -6,26 +6,23 @@ interface BaseSource {
 }
 
 export interface TextureSource extends BaseSource {
-  type: 'texture';
+  type: "texture";
   url: string;
 }
 
 export interface SoundSource extends BaseSource {
-  type: 'sound';
+  type: "sound";
   url: string;
 }
 
 export interface GltfSource extends BaseSource {
-  type: 'gltf';
+  type: "gltf";
   url: string;
 }
 
 export interface FontSource extends BaseSource {
-  type: 'font';
+  type: "font";
   url: string;
 }
 
-export type Source = TextureSource | SoundSource | GltfSource | FontSource
-
-
-
+export type Source = TextureSource | SoundSource | GltfSource | FontSource;

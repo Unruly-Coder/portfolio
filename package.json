@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "pritier": "prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -26,6 +27,7 @@
     "@types/dat.gui": "^0.7.12",
     "@types/howler": "^2.2.11",
     "@types/three": "^0.158.3",
+    "prettier": "3.1.1",
     "vite-plugin-glsl": "^1.2.0"
   }
 }

@@ -1,0 +1,4 @@
+static
+tsconfig.json
+vite.config.js
+**/*.md

@@ -9,7 +9,7 @@ import Stats from "stats.js";
 import { Sound } from "./Sound";
 import * as CANNON from "cannon-es";
 import { Experience } from "./experience/Experience";
-import { MobileControl } from "./controls/MobileControl";
+import { MobileControl } from "./controls/mobile-control/MobileControl";
 import Tween from "@tweenjs/tween.js";
 import cannonDebugger from "cannon-es-debugger";
 

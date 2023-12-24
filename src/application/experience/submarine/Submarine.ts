@@ -13,7 +13,7 @@ export class Submarine extends EventEmitter {
 
   readonly submarineRadius: number = 1;
   readonly mass: number = 20;
-  readonly direction: Vector3 = new Vector3(1, 1, 1).normalize();
+  readonly direction: Vector3 = new Vector3(1, 0, 0).normalize();
 
   private readonly maxExtraPower = 190;
   private extraPower: number = 0;
@@ -36,6 +36,7 @@ export class Submarine extends EventEmitter {
     this.createSubmarineObject3d();
     this.createSubmarinePhysicBody();
     this.createBubbles();
+    this.setDirection(this.direction);
   }
 
   private createSubmarineObject3d() {

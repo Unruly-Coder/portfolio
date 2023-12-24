@@ -20,7 +20,7 @@ export class BubbleEmitter {
 
   private readonly worldPosition = new Vector3();
 
-  private readonly nrOfBubbles = 30;
+  private readonly nrOfBubbles = 60;
   private readonly maxLifeTime = 0.46;
   private readonly maxEmitPerStep = 1;
   private readonly maxEmitInterval = 0.0001;
@@ -148,11 +148,13 @@ export class BubbleEmitter {
         const isBubbleInactive = particleAge >= this.maxLifeTime;
         const emmitReachedLimit = emitted >= this.maxEmitPerStep;
         const intervalReached = deltaLastEmit > this.maxEmitInterval;
+        const isFirstEmitted = this.lastEmitTime === 0;
+        
         const canEmit =
           isBubbleInactive &&
           this.isEmitting &&
           !emmitReachedLimit &&
-          (this.lastEmitTime === 0 || intervalReached);
+          (isFirstEmitted || intervalReached);
 
         if (canEmit) {
           this.emitBubble(i, emitterPosition);

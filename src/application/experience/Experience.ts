@@ -7,7 +7,7 @@ import { MouseControl } from "../controls/MouseControl";
 import { Camera } from "../Camera";
 import { Dust } from "./dust/Dust";
 import { Obstacle } from "./obstacle/Obstackle";
-import { MobileControl } from "../controls/MobileControl";
+import { MobileControl } from "../controls/mobile-control/MobileControl";
 import { Vector2, Vector3 } from "three";
 import { ActiveElements } from "./active-elements/ActiveElements";
 
@@ -159,7 +159,7 @@ export class Experience {
   }
 
   private setupDust() {
-    this.dust = new Dust(this.application, 30, 15, 7, 250, 2);
+    this.dust = new Dust(this.application, 30, 15, 7, 450, 2);
     this.dust.addInstanceToScene();
     this.dust.setPosition(-2, 7, 2);
 
@@ -167,7 +167,7 @@ export class Experience {
     this.dust2.addInstanceToScene();
     this.dust2.setPosition(3, -8, 2);
 
-    this.dust3 = new Dust(this.application, 45, 60, 7, 650, 2);
+    this.dust3 = new Dust(this.application, 45, 60, 7, 650, 3);
     this.dust3.addInstanceToScene();
     this.dust3.setPosition(-10, -29, 2);
   }

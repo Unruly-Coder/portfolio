@@ -1,6 +1,7 @@
 import EventEmitter from "eventemitter3";
 import { Vector2 } from "three";
-import { Application } from "../Application";
+import { Application } from "../../Application";
+import "./mobileControl.css";
 
 export class MobileControl extends EventEmitter {
   private driveButton = document.createElement("button");

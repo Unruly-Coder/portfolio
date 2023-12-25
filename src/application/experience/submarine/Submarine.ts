@@ -47,17 +47,6 @@ export class Submarine extends EventEmitter {
       0xff0000,
     );
     this.submarine = resources.getGltf("submarine").scene;
-
-    const submarinePointLight = new THREE.PointLight(0x7eeefc, 0.2);
-
-    submarinePointLight.position.y = 0.5;
-    submarinePointLight.position.x = 0;
-    submarinePointLight.position.z = -1;
-    submarinePointLight.shadow.mapSize.width = 64;
-    submarinePointLight.shadow.mapSize.height = 64;
-
-    //this.submarine.add(submarinePointLight);
-
     this.bench = resources.getGltf("character").scene;
     this.bench.position.y = -0.3;
 
@@ -129,7 +118,6 @@ export class Submarine extends EventEmitter {
     const minAngle = Math.PI * 0.08;
     const maxAngle = -1 * minAngle;
     let targetRotationZ = 0;
-    // let targetRotationY = 0;
 
     if (forceLength > 0) {
       const angle = Math.atan2(this.direction.y, this.direction.x);
@@ -141,26 +129,15 @@ export class Submarine extends EventEmitter {
       } else {
         targetRotationZ = maxAngle;
       }
-
-      // if((angle > 0 && angle < Math.PI * 0.5) || (angle <= 0 && angle > -Math.PI * 0.5)) {
-      //
-      //   targetRotationY = minAngle * 0.5;
-      // } else {
-      //   targetRotationY = maxAngle * 0.5;
-      // }
     }
-    const zSpeed = targetRotationZ !== 0 ? 0.03 : 0.01;
-    // const ySpeed = targetRotationY !== 0 ? 0.02 : 0.04
 
     if (targetRotationZ === 0 && Math.abs(this.submarine.rotation.z) < 0.01) {
       this.submarine.rotation.z = 0;
     } else {
-      this.submarine.rotation.z +=
-        (targetRotationZ - this.submarine.rotation.z) *
-        this.application.time.getDeltaElapsedTime(); // * zSpeed;
+      const delta = targetRotationZ - this.submarine.rotation.z;
+      const deltaTime = this.application.time.getDeltaElapsedTime();
+      this.submarine.rotation.z += delta * Math.min(deltaTime, 0.1);
     }
-
-    // this.submarine.rotation.y += (targetRotationY - this.submarine.rotation.y) * ySpeed;
   }
 
   private adjustBenchRotation() {

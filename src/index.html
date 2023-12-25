@@ -28,7 +28,10 @@
       rel="stylesheet"
     />
     <title>Paweł Bród - Software Engineer</title>
-    <meta name="description" content="Welcome in my personal space. Explore location and find some info about me."/>
+    <meta
+      name="description"
+      content="Welcome in my personal space. Explore location and find some info about me."
+    />
     <meta property="og:title" content="Paweł Bród - Software Engineer" />
     <meta
       property="og:image"
@@ -53,18 +56,22 @@
     </button>
     <dialog id="dialog">
       <div class="content">
-        <div class="loader_bar" style="--progess: 0"></div>
+        <div class="loader_bar"></div>
         <h1 class="title">Paweł Bród</h1>
         <button id="button">Explore</button>
         <p class="credit">
-          Experience heavily inspired by <a href="https://playdead.com/games/inside/" target="_blank">INSIDE</a> game by <a href="https://playdead.com" target="_blank">Playdead</a> 
+          Experience heavily inspired by
+          <a href="https://playdead.com/games/inside/" target="_blank"
+            >INSIDE</a
+          >
+          game by <a href="https://playdead.com" target="_blank">Playdead</a>
         </p>
       </div>
     </dialog>
     <div id="mouse-helper" style="opacity: 0">
       <p class="left-click">MOVE</p>
       <p class="right-click">POWER</p>
-      <img src="/images/mouse.png" alt="" />
+      <img src="/images/mouse.png" alt="" draggable="false" />
     </div>
     <canvas id="canvas"></canvas>
     <script type="module" src="/main.ts"></script>

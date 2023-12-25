@@ -149,7 +149,7 @@ export class BubbleEmitter {
         const emmitReachedLimit = emitted >= this.maxEmitPerStep;
         const intervalReached = deltaLastEmit > this.maxEmitInterval;
         const isFirstEmitted = this.lastEmitTime === 0;
-        
+
         const canEmit =
           isBubbleInactive &&
           this.isEmitting &&

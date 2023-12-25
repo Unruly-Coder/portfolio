@@ -21,6 +21,8 @@ export class Map {
   private createRoomPhysicBody() {
     const modelOffset = 3 * 0.5;
 
+    const ramp = new CANNON.Box(new CANNON.Vec3(2.3, 0.6, 0.05));
+
     const floor = new CANNON.Box(new CANNON.Vec3(12.7, 0.2, 6));
     const ceiling = new CANNON.Box(new CANNON.Vec3(15.5, 0.5, 6));
     const wallRight = new CANNON.Box(new CANNON.Vec3(0.5, 3.5 + 4.5, 6));
@@ -33,8 +35,7 @@ export class Map {
     const floor4Right = new CANNON.Box(new CANNON.Vec3(8.5, 0.2, 6));
     const floor4Left = new CANNON.Box(new CANNON.Vec3(13.5, 0.2, 6));
 
-    const lastRightWall = new CANNON.Box(new CANNON.Vec3(0.5, 30.4, 6));
-    const lastLeftWall = new CANNON.Box(new CANNON.Vec3(0.5, 30.4, 6));
+    const lastWall = new CANNON.Box(new CANNON.Vec3(0.5, 30.4, 6));
     const lastFloor = new CANNON.Box(new CANNON.Vec3(24.5, 0.2, 6));
 
     const floorBody = new CANNON.Body({ mass: 0, shape: floor });
@@ -51,10 +52,16 @@ export class Map {
 
     const lastRightWallBody = new CANNON.Body({
       mass: 0,
-      shape: lastRightWall,
+      shape: lastWall,
     });
-    const lastLeftWallBody = new CANNON.Body({ mass: 0, shape: lastLeftWall });
+    const lastLeftWallBody = new CANNON.Body({ mass: 0, shape: lastWall });
     const lastFloorBody = new CANNON.Body({ mass: 0, shape: lastFloor });
+
+    const rampBody = new CANNON.Body({ mass: 0, shape: ramp });
+    const rampBody2 = new CANNON.Body({ mass: 0, shape: ramp });
+
+    rampBody.position.set(25.5, -8.45, -2.4);
+    rampBody2.position.set(25.5, -8.45, 2.4);
 
     wallRightBody.position.set(-modelOffset + 30, 3.5 - 4.5, 0);
     wallLeftBody.position.set(-modelOffset - 1, 3.5 - 4.5, 0);
@@ -76,6 +83,9 @@ export class Map {
     lastFloorBody.position.set(13, -90.6, 0);
 
     this.physicBodies = [
+      rampBody,
+      rampBody2,
+
       floorBody,
       ceilingBody,
       wallRightBody,

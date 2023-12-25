@@ -231,8 +231,6 @@ canvas {
   }
 }
 
-
-
 @keyframes music-bar-anim {
   0% {
     transform: scale3d(1, 0.3, 1);

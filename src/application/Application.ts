@@ -32,21 +32,22 @@ export class Application {
     if (location.hash === "#debug") {
       this.setDebug();
     }
-
-    this.scene = new Scene();
-    this.physicWorld = new CANNON.World();
+    
     this.sizes = new Sizes();
     this.time = new Time();
+    this.scene = new Scene();
+    this.camera = new Camera(this);
+    this.renderer = new Renderer(this);
+
+    this.physicWorld = new CANNON.World();
     this.sound = new Sound(this);
     this.mouseControl = new MouseControl(this);
     this.mobileControl = new MobileControl(this);
-    this.camera = new Camera(this);
     this.experience = new Experience(this);
-    this.renderer = new Renderer(this);
+    
     this.cannonDebugger = cannonDebugger(this.scene, this.physicWorld);
-
+    
     this.adjustFOV();
-
     this.time.on("tick", this.update);
     this.sizes.on("resize", this.resize);
   }
@@ -81,6 +82,7 @@ export class Application {
 
   start() {
     this.time.start();
+    this.renderer.renderer.compile(this.scene, this.camera.instance);
   }
 
   experienceStart(enableTouchInterface = false) {

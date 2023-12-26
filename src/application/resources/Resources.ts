@@ -58,8 +58,11 @@ class Resources extends EventEmitter {
     super();
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath("/libs/draco/");
+    dracoLoader.preload();
+    
     const gtlfLoader = new GLTFLoader();
     gtlfLoader.setDRACOLoader(dracoLoader);
+    
 
     this.loaders = {
       textureLoader: new TextureLoader(),

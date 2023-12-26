@@ -8,7 +8,7 @@ import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass";
 
 export class Renderer {
-  private readonly renderer: WebGLRenderer;
+  readonly renderer: WebGLRenderer;
   private readonly effectComposer: EffectComposer;
 
   constructor(private application: Application) {

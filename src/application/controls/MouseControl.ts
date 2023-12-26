@@ -24,15 +24,16 @@ export class MouseControl extends EventEmitter {
     this.castPosition = new Vector3();
     this.raycaster = new Raycaster();
     this.percentagePosition = new Vector2();
-    (this.castPlane = new Plane(new Vector3(0, 0, 1), 0)),
-      document.addEventListener("mousemove", (event) => {
-        window.requestAnimationFrame(() => {
-          this.screenPosition.x = event.clientX;
-          this.screenPosition.y = event.clientY;
+    this.castPlane = new Plane(new Vector3(0, 0, 1), 0);
+      
+    document.addEventListener("mousemove", (event) => {
+      window.requestAnimationFrame(() => {
+        this.screenPosition.x = event.clientX;
+        this.screenPosition.y = event.clientY;
 
-          this.emit("move", event);
-        });
+        this.emit("move", event);
       });
+    });
 
     document.addEventListener("mousedown", (event) => {
       if (!this.isEnabled) {

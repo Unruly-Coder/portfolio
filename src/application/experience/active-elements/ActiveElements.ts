@@ -45,7 +45,14 @@ export class ActiveElements {
       if (event.key === "Enter" && this.focusedElement) {
         const win = window.open(this.focusedElement.link.url, "_blank");
         if (!win) {
-          alert("Please allow popups for this website");
+          //iphone hack
+          const linkElement = document.createElement('a');
+          linkElement.href = this.focusedElement.link.url;
+          linkElement.target = "_blank";
+          linkElement.rel = "external";
+          window.document.body.append(linkElement);
+          linkElement.click();
+          linkElement.remove();
         }
       }
     });

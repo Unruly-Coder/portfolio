@@ -51,6 +51,9 @@ export class Sound {
       this.audioButton.addEventListener("click", () => {
         this.toggleMute();
       });
+      this.audioButton.addEventListener("touchend", () => {
+        this.toggleMute();
+      });
     }
   }
 

@@ -32,7 +32,7 @@ export class Application {
     if (location.hash === "#debug") {
       this.setDebug();
     }
-    
+
     this.sizes = new Sizes();
     this.time = new Time();
     this.scene = new Scene();
@@ -44,9 +44,9 @@ export class Application {
     this.mouseControl = new MouseControl(this);
     this.mobileControl = new MobileControl(this);
     this.experience = new Experience(this);
-    
+
     this.cannonDebugger = cannonDebugger(this.scene, this.physicWorld);
-    
+
     this.adjustFOV();
     this.time.on("tick", this.update);
     this.sizes.on("resize", this.resize);

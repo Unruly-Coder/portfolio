@@ -10,7 +10,6 @@ setProgress(0);
 
 function setProgress(progress: number) {
   document.body.style.setProperty("--progress", progress.toString());
-  
 }
 
 function addBodyClass(className: string) {

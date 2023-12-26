@@ -25,7 +25,7 @@ export class MouseControl extends EventEmitter {
     this.raycaster = new Raycaster();
     this.percentagePosition = new Vector2();
     this.castPlane = new Plane(new Vector3(0, 0, 1), 0);
-      
+
     document.addEventListener("mousemove", (event) => {
       window.requestAnimationFrame(() => {
         this.screenPosition.x = event.clientX;

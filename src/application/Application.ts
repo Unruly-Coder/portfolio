@@ -38,7 +38,6 @@ export class Application {
     this.scene = new Scene();
     this.camera = new Camera(this);
     this.renderer = new Renderer(this);
-
     this.physicWorld = new CANNON.World();
     this.sound = new Sound(this);
     this.mouseControl = new MouseControl(this);
@@ -105,7 +104,7 @@ export class Application {
 
     this.mouseControl.updateRaycaster();
     this.experience.update();
-    // this.cannonDebugger.update();
+    //this.cannonDebugger.update();
     this.renderer.update();
 
     Tween.update();

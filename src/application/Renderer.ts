@@ -70,6 +70,6 @@ export class Renderer {
   }
 
   update() {
-    this.effectComposer.render();
+    this.effectComposer.render(this.application.time.getDeltaElapsedTime());
   }
 }

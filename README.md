@@ -1,5 +1,4 @@
 # Paweł Bród Portfolio
-![Untitled (2)](https://github.com/Crazy-Ivan/yellow-submarine/assets/4831814/ce0b4bf4-796d-48e2-b96c-c103bd7268ca)
 
 <a href="https://pawel-brod.com">-- Click here to visit the website--</a>
 
@@ -21,3 +20,5 @@ npm run dev
 # Build for production
 npm run build
 ```
+---
+![ezgif-5-d968085579](https://github.com/Crazy-Ivan/portfolio/assets/4831814/48499fde-c429-434f-964b-94e449a6f83d)

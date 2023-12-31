@@ -1,15 +1,22 @@
-import { Vector3, Object3D } from "three";
-import * as THREE from "three";
+import { Vector3, Object3D, Quaternion, ArrowHelper } from "three";
 import { Application } from "../../Application";
 import { Reflector } from "./Reflector";
-import * as CANNON from "cannon-es";
 import { Bubbles } from "./Bubbles";
 import EventEmitter from "eventemitter3";
 import { resources } from "../../resources/Resources";
 
 export class Submarine extends EventEmitter {
   instance!: Object3D;
-  physicBody!: CANNON.Body;
+  physicBodyId: number | undefined;
+  physicBodyData: {
+    position: Vector3;
+    quaternion: Quaternion;
+    velocity: Vector3;
+  } = {
+    position: new Vector3(),
+    quaternion: new Quaternion(),
+    velocity: new Vector3(),
+  };
 
   readonly submarineRadius: number = 1;
   readonly mass: number = 20;
@@ -20,9 +27,9 @@ export class Submarine extends EventEmitter {
   private isExtraPowerLoading: boolean = false;
 
   private forceStrength: number = 0;
-  private force: CANNON.Vec3 = new CANNON.Vec3(0, 0, 0);
+  private force: Vector3 = new Vector3(0, 0, 0);
 
-  private directionArrow!: THREE.ArrowHelper;
+  private directionArrow!: ArrowHelper;
   private submarine!: Object3D;
   private bench!: Object3D;
   private reflector!: Reflector;
@@ -40,7 +47,7 @@ export class Submarine extends EventEmitter {
   }
 
   private createSubmarineObject3d() {
-    this.directionArrow = new THREE.ArrowHelper(
+    this.directionArrow = new ArrowHelper(
       this.direction,
       new Vector3(0, 0, 0),
       2,
@@ -64,17 +71,20 @@ export class Submarine extends EventEmitter {
     this.instance = this.submarine;
   }
 
-  private createSubmarinePhysicBody() {
-    const shape = new CANNON.Sphere(this.submarineRadius + 0.1);
-    this.physicBody = new CANNON.Body({
+  private async createSubmarinePhysicBody() {
+    this.physicBodyId = await this.application.physicApi.addBody({
       mass: this.mass,
-      position: new CANNON.Vec3(
+      position: [
         this.initialPosition.x,
         this.initialPosition.y,
         this.initialPosition.z,
-      ),
-      shape: shape,
-      fixedRotation: true,
+      ],
+      shapes: [
+        {
+          type: "sphere",
+          radius: this.submarineRadius + 0.1,
+        },
+      ],
     });
   }
 
@@ -85,7 +95,7 @@ export class Submarine extends EventEmitter {
 
   private adjustForce() {
     this.force.set(this.direction.x, this.direction.y, this.direction.z);
-    this.force = this.force.scale(this.forceStrength);
+    this.force = this.force.multiplyScalar(this.forceStrength);
   }
 
   getReflectorRangeFactor = (
@@ -103,12 +113,23 @@ export class Submarine extends EventEmitter {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   };
 
-  private syncObject3d() {
+  private syncData() {
     //not sure why but this is needed to make the submarine move smoothly
     //cannon js is not precise enough for some reason;
-    const targetX = this.physicBody.position.x;
-    const targetY = this.physicBody.position.y;
-    const targetZ = this.physicBody.position.z;
+
+    if (this.physicBodyId === undefined) return;
+
+    const physicData = this.application.physicApi.getBodyData(
+      this.physicBodyId,
+    );
+
+    this.physicBodyData.position.copy(physicData.position);
+    this.physicBodyData.quaternion.copy(physicData.quaternion);
+    this.physicBodyData.velocity.copy(physicData.velocity);
+
+    const targetX = physicData.position.x;
+    const targetY = physicData.position.y;
+    const targetZ = physicData.position.z;
 
     this.instance.position.x += (targetX - this.instance.position.x) * 0.35;
     this.instance.position.y += (targetY - this.instance.position.y) * 0.35;
@@ -184,12 +205,15 @@ export class Submarine extends EventEmitter {
   }
 
   private loadExtraPower() {
+    if (this.physicBodyId === undefined) return;
+
     if (this.isExtraPowerLoading && this.extraPower < this.maxExtraPower) {
       this.extraPower += this.application.time.getDeltaElapsedTime() * 100;
     }
 
-    this.physicBody.applyImpulse(
-      new CANNON.Vec3(
+    this.application.physicApi.applyImpulse({
+      id: this.physicBodyId,
+      impulse: [
         (Math.sin(this.application.time.getElapsedTime() * 31) *
           this.extraPower) /
           10,
@@ -197,8 +221,8 @@ export class Submarine extends EventEmitter {
           this.extraPower) /
           10,
         0,
-      ),
-    );
+      ],
+    });
   }
 
   startLoadingExtraPower() {
@@ -209,12 +233,16 @@ export class Submarine extends EventEmitter {
   }
 
   firePowerMove() {
-    const impulse = new CANNON.Vec3(
-      this.direction.x,
-      this.direction.y,
-      this.direction.z,
-    ).scale(this.extraPower);
-    this.physicBody.applyImpulse(impulse);
+    if (this.physicBodyId === undefined) return;
+
+    this.application.physicApi.applyImpulse({
+      id: this.physicBodyId,
+      impulse: [
+        this.direction.x * this.extraPower,
+        this.direction.y * this.extraPower,
+        this.direction.z * this.extraPower,
+      ],
+    });
 
     const powerloadSound = this.application.sound.sounds.powerload;
     powerloadSound.fade(powerloadSound.volume(), 0, 100);
@@ -239,26 +267,26 @@ export class Submarine extends EventEmitter {
     this.application.scene.add(this.instance);
   }
 
-  addBodyToPhysicalWorld() {
-    this.application.physicWorld.addBody(this.physicBody);
-  }
-
   update() {
+    this.syncData();
+
     if (this.isExtraPowerLoading) {
       this.loadExtraPower();
     }
 
-    if (this.forceStrength > 0) {
-      this.physicBody.applyLocalForce(this.force);
+    if (this.forceStrength > 0 && this.physicBodyId !== undefined) {
+      this.application.physicApi.applyLocalForce({
+        id: this.physicBodyId,
+        force: [this.force.x, this.force.y, this.force.z],
+      });
     }
 
-    const currentVelocity = this.physicBody.velocity.length();
+    const currentVelocity = this.physicBodyData.velocity.length();
     if (this.lastVelocity !== currentVelocity) {
       this.emit("velocityChange", currentVelocity);
-      this.lastVelocity = this.physicBody.velocity.length();
+      this.lastVelocity = this.physicBodyData.velocity.length();
     }
 
-    this.syncObject3d();
     this.adjustBenchRotation();
     this.reflector.update();
     this.bubbles.update();

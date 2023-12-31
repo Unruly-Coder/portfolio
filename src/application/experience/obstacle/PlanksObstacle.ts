@@ -4,11 +4,19 @@ import { resources } from "../../resources/Resources";
 
 export class PlanksObstacle {
   private planks: Plank[] = [];
-
   private planksData: { x: number; y: number; z: number }[] = [];
+  private isInit: boolean = false;
 
-  constructor(private application: Application) {
+  constructor(
+    private application: Application,
+    private initialPosition?: [x: number, y: number, z: number],
+  ) {
     this.createPlanks();
+  }
+
+  async init() {
+    await Promise.all(this.planks.map((plank) => plank.init()));
+    this.isInit = true;
   }
 
   private createPlanks() {
@@ -20,8 +28,16 @@ export class PlanksObstacle {
         z: mesh.position.z,
       };
       this.planksData.push(initPosition);
-      const plank = new Plank(this.application, mesh);
-      plank.setPosition(initPosition.x, initPosition.y, initPosition.z);
+
+      const initialGlobalPosition: [number, number, number] | undefined = this
+        .initialPosition
+        ? [
+            this.initialPosition[0] + initPosition.x,
+            this.initialPosition[1] + initPosition.y,
+            this.initialPosition[2] + initPosition.z,
+          ]
+        : undefined;
+      const plank = new Plank(this.application, mesh, initialGlobalPosition);
       this.planks.push(plank);
     });
   }
@@ -42,12 +58,6 @@ export class PlanksObstacle {
     });
   }
 
-  addBodyToPhysicalWorld() {
-    this.planks.forEach((plank) => {
-      plank.addBodyToPhysicalWorld();
-    });
-  }
-
   applyForceToPlanks() {
     this.planks.forEach((plank) => {
       plank.applyForce();
@@ -55,6 +65,8 @@ export class PlanksObstacle {
   }
 
   update() {
+    if (!this.isInit) return;
+
     this.planks.forEach((plank) => {
       plank.update();
     });

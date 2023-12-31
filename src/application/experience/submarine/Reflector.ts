@@ -1,19 +1,28 @@
 import { Application } from "../../Application";
 import { resources } from "../../resources/Resources";
-import * as THREE from "three";
-import { Group } from "three";
+import {
+  Group,
+  Vector3,
+  SpotLight,
+  Mesh,
+  MeshBasicMaterial,
+  SphereGeometry,
+  MeshLambertMaterial,
+  BoxGeometry,
+  CylinderGeometry,
+} from "three";
 
 export class Reflector {
-  instance: THREE.Group = new THREE.Group();
-  private lampInstance: THREE.Group = new THREE.Group();
-  private direction: THREE.Vector3 = new THREE.Vector3(0, -1, 0);
-  private lampWorldDirection: THREE.Vector3 = new THREE.Vector3(0, -1, 0);
-  private lampWorldPosition: THREE.Vector3 = new THREE.Vector3(0, 0, 0);
-  private lightedObjectPosition = new THREE.Vector3(0, 0, 0);
+  instance: Group = new Group();
+  private lampInstance: Group = new Group();
+  private direction: Vector3 = new Vector3(0, -1, 0);
+  private lampWorldDirection: Vector3 = new Vector3(0, -1, 0);
+  private lampWorldPosition: Vector3 = new Vector3(0, 0, 0);
+  private lightedObjectPosition: Vector3 = new Vector3(0, 0, 0);
   private colors = { spotlightColor: 0xa8efff };
-  private spotLight!: THREE.SpotLight;
-  private cone!: THREE.Mesh;
-  private coneMaterial!: THREE.MeshBasicMaterial;
+  private spotLight!: SpotLight;
+  private cone!: Mesh;
+  private coneMaterial!: MeshBasicMaterial;
 
   private lastTargetLightBeamRotation = 0;
 
@@ -26,7 +35,7 @@ export class Reflector {
   }
 
   createReflector() {
-    const lampGeometry = new THREE.SphereGeometry(
+    const lampGeometry = new SphereGeometry(
       0.15,
       8,
       8,
@@ -35,16 +44,16 @@ export class Reflector {
       0,
       Math.PI * 0.5,
     );
-    const lampMaterial = new THREE.MeshLambertMaterial({
+    const lampMaterial = new MeshLambertMaterial({
       color: "black",
     });
-    const lampMesh = new THREE.Mesh(lampGeometry, lampMaterial);
+    const lampMesh = new Mesh(lampGeometry, lampMaterial);
 
     const handle = new Group();
-    const handlerGeometry = new THREE.BoxGeometry(0.1, 0.3, 0.1);
-    const handlerGeometry2 = new THREE.BoxGeometry(0.3, 0.07, 0.07);
-    const handleMesh = new THREE.Mesh(handlerGeometry, lampMaterial);
-    const handleMesh2 = new THREE.Mesh(handlerGeometry2, lampMaterial);
+    const handlerGeometry = new BoxGeometry(0.1, 0.3, 0.1);
+    const handlerGeometry2 = new BoxGeometry(0.3, 0.07, 0.07);
+    const handleMesh = new Mesh(handlerGeometry, lampMaterial);
+    const handleMesh2 = new Mesh(handlerGeometry2, lampMaterial);
     handleMesh.position.y = 0.11;
     handleMesh.position.x = -0.4;
     handleMesh.rotation.z = Math.PI / 4;
@@ -55,7 +64,7 @@ export class Reflector {
 
     const coneHeight = 9;
     const angle = Math.PI / 4;
-    const coneGeometry = new THREE.CylinderGeometry(
+    const coneGeometry = new CylinderGeometry(
       0.1,
       coneHeight * Math.tan(angle) * 0.55,
       coneHeight,
@@ -66,7 +75,7 @@ export class Reflector {
       Math.PI,
     );
 
-    const coneMaterial = new THREE.MeshBasicMaterial({
+    const coneMaterial = new MeshBasicMaterial({
       color: this.colors.spotlightColor,
       transparent: true,
       opacity: 0.09,
@@ -75,7 +84,7 @@ export class Reflector {
       alphaMap: resources.getTexture("lightRay"),
     });
 
-    const coneGeometry2 = new THREE.CylinderGeometry(
+    const coneGeometry2 = new CylinderGeometry(
       0.1,
       coneHeight * Math.tan(angle) * 0.85,
       coneHeight,
@@ -86,7 +95,7 @@ export class Reflector {
       Math.PI,
     );
 
-    const coneMaterial2 = new THREE.MeshBasicMaterial({
+    const coneMaterial2 = new MeshBasicMaterial({
       color: this.colors.spotlightColor,
       transparent: true,
       opacity: 0.03,
@@ -95,16 +104,16 @@ export class Reflector {
       alphaMap: resources.getTexture("lightRay2"),
     });
 
-    const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+    const cone = new Mesh(coneGeometry, coneMaterial);
     cone.position.y = (-1 * coneHeight) / 2;
     cone.rotation.y = Math.PI;
 
-    const cone2 = new THREE.Mesh(coneGeometry2, coneMaterial2);
+    const cone2 = new Mesh(coneGeometry2, coneMaterial2);
 
     cone.add(cone2);
     this.coneMaterial = coneMaterial;
 
-    const spotLight = new THREE.SpotLight(this.colors.spotlightColor, 250, 30); //0x7eeefc
+    const spotLight = new SpotLight(this.colors.spotlightColor, 250, 30); //0x7eeefc
     spotLight.penumbra = 1;
 
     spotLight.position.y = 0;

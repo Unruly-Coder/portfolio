@@ -1,77 +1,81 @@
-import { BoxGeometry, Group, Mesh, MeshBasicMaterial } from "three";
-import * as CANNON from "cannon-es";
+import { Group } from "three";
+
 import { Application } from "../../Application";
-import { PlanksObstacle } from "./PlanksObstackle";
+import { PlanksObstacle } from "./PlanksObstacle";
 
 export class Obstacle {
   private instance: Group = new Group();
-  private physicBody!: CANNON.Body;
-  private physicalBodyHelper!: Mesh;
+  private physicBodyId: number | undefined;
 
   private isPermanentBroken: boolean = false;
   private width: number = 4;
   private height: number = 0.1;
   private depth: number = 4;
+  private isInit: boolean = false;
 
   private planksObstacle: PlanksObstacle;
 
-  constructor(protected application: Application) {
-    this.createPhysicalBody();
-    this.createPhysicalBodyHelper();
+  constructor(
+    private application: Application,
+    private initialPosition?: [x: number, y: number, z: number],
+  ) {
+    this.planksObstacle = new PlanksObstacle(application, initialPosition);
+  }
+
+  async init() {
+    await this.createPhysicalBody();
+    await this.planksObstacle.init();
     this.setupCollisionSound();
 
-    this.physicBody.addEventListener("collide", () => {
+    if (this.physicBodyId === undefined)
+      throw new Error("physicBodyId is undefined");
+
+    const bodyData = this.application.physicApi.getBodyData(this.physicBodyId);
+
+    this.application.physicApi.addListener(this.physicBodyId, "collide", () => {
       if (this.isPermanentBroken) return;
 
-      if (!this.physicBody.collisionResponse) {
+      if (!bodyData.collisionResponse) {
         this.broke();
       }
     });
 
-    this.planksObstacle = new PlanksObstacle(application);
+    this.isInit = true;
   }
   addInstanceToScene() {
     this.application.scene.add(this.instance);
-    //this.application.scene.add(this.physicalBodyHelper);
     this.planksObstacle.addInstanceToScene();
   }
 
-  addBodyToPhysicalWorld() {
-    this.application.physicWorld.addBody(this.physicBody);
-    this.planksObstacle.addBodyToPhysicalWorld();
-  }
-
-  private createPhysicalBody() {
-    const box = new CANNON.Box(
-      new CANNON.Vec3(this.width / 2, this.height / 2, this.depth / 2),
-    );
-    this.physicBody = new CANNON.Body({ mass: 0, shape: box });
-  }
-
-  private createPhysicalBodyHelper() {
-    const box = new BoxGeometry(this.width, this.height, this.depth);
-    const boxMaterial = new MeshBasicMaterial({
-      color: 0x404040,
-      wireframe: true,
+  private async createPhysicalBody() {
+    this.physicBodyId = await this.application.physicApi.addBody({
+      mass: 0,
+      position: this.initialPosition,
+      shapes: [
+        {
+          type: "box",
+          halfExtents: [this.width / 2, this.height / 2, this.depth / 2],
+        },
+      ],
     });
-    this.physicalBodyHelper = new Mesh(box, boxMaterial);
   }
 
   private setupCollisionSound() {
-    this.physicBody.addEventListener(
+    if (this.physicBodyId === undefined) {
+      throw new Error(
+        "physicBodyId is undefined. Collision sound setup failed.",
+      );
+    }
+
+    this.application.physicApi.addListener(
+      this.physicBodyId,
       "collide",
-      (event: {
-        contact: {
-          bi: any;
-          getImpactVelocityAlongNormal: () => any;
-        };
-      }) => {
+      (event) => {
+        const targetData = this.application.physicApi.getBodyData(
+          event.targetId,
+        );
         const impactVelocity = parseFloat(
-          (
-            (event.contact.getImpactVelocityAlongNormal() *
-              event.contact.bi.mass) /
-            100
-          ).toFixed(1),
+          ((event.contact.impactVelocity * targetData.mass) / 100).toFixed(1),
         );
 
         if (impactVelocity > 0.1 && this.isActive) {
@@ -89,42 +93,72 @@ export class Obstacle {
   }
 
   setPosition(x: number, y: number, z: number) {
+    if (this.physicBodyId === undefined) {
+      throw new Error("physicBodyId is undefined. Cannot set position.");
+    }
+
     this.instance.position.x = x;
     this.instance.position.y = y;
     this.instance.position.z = z;
-
-    this.physicBody.position.x = x;
-    this.physicBody.position.y = y;
-    this.physicBody.position.z = z;
-
-    this.physicalBodyHelper.position.x = x;
-    this.physicalBodyHelper.position.y = y;
-    this.physicalBodyHelper.position.z = z;
+    this.application.physicApi.setBodyPosition(this.physicBodyId, x, y, z);
 
     this.planksObstacle.setPosition(x, y, z);
   }
 
   get isActive() {
+    if (this.physicBodyId === undefined) {
+      throw new Error(
+        "physicBodyId is undefined. Cannot determine activity status.",
+      );
+    }
+
     if (this.isPermanentBroken) return false;
-    return this.physicBody.collisionResponse;
+    const bodyData = this.application.physicApi.getBodyData(this.physicBodyId);
+    return bodyData.collisionResponse;
   }
 
   deactivate() {
-    this.physicBody.collisionResponse = false;
+    if (this.physicBodyId === undefined) {
+      throw new Error("physicBodyId is undefined. Cannot deactivate.");
+    }
+
+    this.application.physicApi.setBodyCollisionResponse(
+      this.physicBodyId,
+      false,
+    );
   }
 
   activate() {
+    if (this.physicBodyId === undefined) {
+      throw new Error(
+        "Cannot activate due to permanent breakage or undefined physicBodyId.",
+      );
+    }
+
     if (this.isPermanentBroken) return;
-    this.physicBody.collisionResponse = true;
+
+    this.application.physicApi.setBodyCollisionResponse(
+      this.physicBodyId,
+      true,
+    );
   }
 
   broke() {
+    if (this.physicBodyId === undefined) {
+      throw new Error("physicBodyId is undefined. Cannot break.");
+    }
+
     this.isPermanentBroken = true;
-    this.physicBody.collisionResponse = false;
+    this.application.physicApi.setBodyCollisionResponse(
+      this.physicBodyId,
+      false,
+    );
     this.planksObstacle.applyForceToPlanks();
   }
 
   update() {
+    if (!this.isInit) return;
+
     this.planksObstacle.update();
   }
 }

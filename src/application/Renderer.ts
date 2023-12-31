@@ -31,8 +31,6 @@ export class Renderer {
     this.renderer.setPixelRatio(this.application.sizes.allowedPixelRatio);
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.debug.checkShaderErrors = false;
-    
-    
 
     this.effectComposer = new EffectComposer(this.renderer);
     this.effectComposer.setSize(
@@ -46,15 +44,14 @@ export class Renderer {
       this.application.camera.instance,
     );
     this.effectComposer.addPass(renderPass);
-    
-   if(!Device.isAndroid()) {
+
+    if (!Device.isAndroid()) {
       const filmPass = new FilmPass(0.9);
       this.effectComposer.addPass(filmPass);
-   }
+    }
 
     const outputPass = new OutputPass();
     this.effectComposer.addPass(outputPass);
-    
   }
 
   resize() {

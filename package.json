@@ -16,7 +16,6 @@
   "dependencies": {
     "@tweenjs/tween.js": "^21.0.0",
     "cannon-es": "^0.20.0",
-    "cannon-es-debugger": "^1.0.0",
     "dat.gui": "^0.7.9",
     "eventemitter3": "^5.0.1",
     "howler": "^2.2.4",

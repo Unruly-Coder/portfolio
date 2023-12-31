@@ -1,4 +1,3 @@
-import * as Cannon from "cannon-es";
 import { Application } from "../Application";
 import { Submarine } from "./submarine/Submarine";
 import { Environment } from "./environment/Environment";
@@ -47,25 +46,16 @@ export class Experience {
 
     this.camera.instance.position.x = this.submarine.initialPosition.x;
     this.camera.instance.position.y = this.submarine.initialPosition.y;
-
-    //this has to be done after all object creation;
-    this.adjustPhysicDamping();
   }
 
   private setupPhysicsWorld() {
-    this.application.physicWorld.gravity.set(0, WORLD_GRAVITY, 0);
-    this.application.physicWorld.allowSleep = true;
-
-    const broadphase = new Cannon.SAPBroadphase(this.application.physicWorld);
-    broadphase.autoDetectAxis();
-    this.application.physicWorld.broadphase = broadphase;
-  }
-
-  private adjustPhysicDamping() {
-    this.application.physicWorld.bodies.forEach((body) => {
-      body.linearDamping = 0.3;
-      body.angularDamping = 0.2;
-      body.linearFactor.set(1, 1, 0);
+    this.application.physicApi.init({
+      gravity: [0, WORLD_GRAVITY, 0],
+      allowSleep: true,
+      broadphase: "SAPBroadphase",
+      defaultAngularDamping: 0.2,
+      defaultLinearDamping: 0.3,
+      defaultLinearFactor: [1, 1, 0],
     });
   }
 
@@ -78,25 +68,25 @@ export class Experience {
   }
 
   private setupObstacles() {
-    this.obstacle1 = new Obstacle(this.application);
-    this.obstacle1.setPosition(25.5, 0, 0);
-    this.obstacle1.addInstanceToScene();
-    this.obstacle1.addBodyToPhysicalWorld();
+    this.obstacle1 = new Obstacle(this.application, [25.5, 0, 0]);
+    this.obstacle1.init().then(() => {
+      this.obstacle1.addInstanceToScene();
+    });
 
-    this.obstacle2 = new Obstacle(this.application);
-    this.obstacle2.setPosition(8.5, -29.8, 0);
-    this.obstacle2.addInstanceToScene();
-    this.obstacle2.addBodyToPhysicalWorld();
+    this.obstacle2 = new Obstacle(this.application, [8.5, -29.8, 0]);
+    this.obstacle2.init().then(() => {
+      this.obstacle2.setPosition(8.5, -29.8, 0);
+      this.obstacle2.addInstanceToScene();
+    });
   }
 
   private setupSubmarine() {
     this.submarine = new Submarine(this.application);
     this.submarine.addInstanceToScene();
-    this.submarine.addBodyToPhysicalWorld();
 
     //connect obstacles
     this.submarine.on("velocityChange", (velocity) => {
-      if (velocity > 5) {
+      if (velocity > 6) {
         this.obstacle1.deactivate();
         this.obstacle2.deactivate();
       } else {
@@ -154,8 +144,9 @@ export class Experience {
 
   private setupMap() {
     this.map = new Map(this.application);
-    this.map.addInstanceToScene();
-    this.map.addBodyToPhysicalWorld();
+    this.map.init().then(() => {
+      this.map.addInstanceToScene();
+    });
   }
 
   private setupDust() {
@@ -200,10 +191,8 @@ export class Experience {
   }
 
   private stepPhysics() {
-    this.application.physicWorld.step(
-      1 / 60,
+    this.application.physicApi.step(
       this.application.time.getDeltaElapsedTime(),
-      10,
     );
   }
 

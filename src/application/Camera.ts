@@ -1,16 +1,15 @@
-import * as THREE from "three";
 import { Application } from "./Application";
-import { Vector3 } from "three";
+import { Vector3, Frustum, Matrix4, PerspectiveCamera } from "three";
 
 export class Camera {
-  readonly instance: THREE.PerspectiveCamera;
+  readonly instance: PerspectiveCamera;
   readonly defaultFOV: number = 50;
   readonly defaultZ: number = 13;
 
-  private frustum = new THREE.Frustum();
-  private projectionMatrix = new THREE.Matrix4();
+  private frustum = new Frustum();
+  private projectionMatrix = new Matrix4();
   constructor(private application: Application) {
-    this.instance = new THREE.PerspectiveCamera(
+    this.instance = new PerspectiveCamera(
       this.defaultFOV,
       this.application.sizes.aspectRatio,
       0.1,

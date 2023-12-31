@@ -1,15 +1,17 @@
 import { Application } from "../../Application";
 import { resources } from "../../resources/Resources";
-import * as THREE from "three";
-import * as CANNON from "cannon-es";
+import { Group } from "three";
 
 export class Map {
-  private instance!: THREE.Group;
-  private physicBody!: CANNON.Body;
+  private instance!: Group;
+  private physicBodyId: number | undefined;
 
   constructor(private application: Application) {
     this.createRoomObject3d();
-    this.createRoomPhysicBody();
+  }
+
+  async init() {
+    await this.createRoomPhysicBody();
     this.setupCollisionSound();
   }
 
@@ -18,67 +20,105 @@ export class Map {
     this.instance = map.scene;
   }
 
-  private createRoomPhysicBody() {
+  private async createRoomPhysicBody() {
     const modelOffset = 3 * 0.5;
 
-    const ramp = new CANNON.Box(new CANNON.Vec3(2.3, 0.6, 0.05));
-
-    const floor = new CANNON.Box(new CANNON.Vec3(12.7, 0.2, 6));
-    const ceiling = new CANNON.Box(new CANNON.Vec3(15.5, 0.5, 6));
-    const wall = new CANNON.Box(new CANNON.Vec3(0.5, 3.5 + 4.5, 6));
-
-    const floor2Right = new CANNON.Box(new CANNON.Vec3(6.4, 7.5, 6));
-    const floor2Left = new CANNON.Box(new CANNON.Vec3(2, 7.5, 6));
-
-    const floor3 = new CANNON.Box(new CANNON.Vec3(1.5, 3, 6));
-
-    const floor4Right = new CANNON.Box(new CANNON.Vec3(8.5, 0.2, 6));
-    const floor4Left = new CANNON.Box(new CANNON.Vec3(13.5, 0.2, 6));
-
-    const lastWall = new CANNON.Box(new CANNON.Vec3(0.5, 30.4, 6));
-    const lastFloor = new CANNON.Box(new CANNON.Vec3(24.5, 0.2, 6));
-
-    const roomBody = new CANNON.Body({ mass: 0 });
-    roomBody.addShape(floor, new CANNON.Vec3(-modelOffset + 12.1, -0.1, 0));
-    roomBody.addShape(ceiling, new CANNON.Vec3(-modelOffset + 15, 7.5, 0));
-    roomBody.addShape(wall, new CANNON.Vec3(-modelOffset - 1, 3.5 - 4.5, 0));
-    roomBody.addShape(wall, new CANNON.Vec3(-modelOffset + 30, 3.5 - 4.5, 0));
-    roomBody.addShape(
-      floor2Right,
-      new CANNON.Vec3(-modelOffset + 23, -16.5, 0),
-    );
-    roomBody.addShape(
-      floor2Left,
-      new CANNON.Vec3(-modelOffset + 1.4, -16.5, 0),
-    );
-    roomBody.addShape(floor3, new CANNON.Vec3(13.4, -3 - 24, 0));
-    roomBody.addShape(floor3, new CANNON.Vec3(3.6, -3 - 24, 0));
-    roomBody.addShape(floor4Right, new CANNON.Vec3(-2.2, -30.2, 0));
-    roomBody.addShape(floor4Left, new CANNON.Vec3(24, -30.2, 0));
-    roomBody.addShape(lastWall, new CANNON.Vec3(-11.3, -60, 0));
-    roomBody.addShape(lastWall, new CANNON.Vec3(37.9, -60, 0));
-    roomBody.addShape(lastFloor, new CANNON.Vec3(13, -90.6, 0));
-    roomBody.addShape(ramp, new CANNON.Vec3(25.5, -8.45, -2.4));
-    roomBody.addShape(ramp, new CANNON.Vec3(25.5, -8.45, 2.4));
-
-    this.physicBody = roomBody;
+    this.physicBodyId = await this.application.physicApi.addBody({
+      mass: 0,
+      position: [0, 0, 0],
+      shapes: [
+        {
+          type: "box", // floor
+          halfExtents: [12.7, 0.2, 6],
+          offset: [-modelOffset + 12.1, -0.1, 0],
+        },
+        {
+          type: "box", // ceiling
+          halfExtents: [15.5, 0.5, 6],
+          offset: [-modelOffset + 15, 7.5, 0],
+        },
+        {
+          type: "box", // wall
+          halfExtents: [0.5, 3.5 + 4.5, 6],
+          offset: [-modelOffset - 1, 3.5 - 4.5, 0],
+        },
+        {
+          type: "box", // wall
+          halfExtents: [0.5, 3.5 + 4.5, 6],
+          offset: [-modelOffset + 30, 3.5 - 4.5, 0],
+        },
+        {
+          type: "box", // floor2Right
+          halfExtents: [6.4, 7.5, 6],
+          offset: [-modelOffset + 23, -16.5, 0],
+        },
+        {
+          type: "box", // floor2Left
+          halfExtents: [2, 7.5, 6],
+          offset: [-modelOffset + 1.4, -16.5, 0],
+        },
+        {
+          type: "box", // floor3
+          halfExtents: [1.5, 3, 6],
+          offset: [13.4, -3 - 24, 0],
+        },
+        {
+          type: "box", // floor3
+          halfExtents: [1.5, 3, 6],
+          offset: [3.6, -3 - 24, 0],
+        },
+        {
+          type: "box", // floor4Right
+          halfExtents: [8.5, 0.2, 6],
+          offset: [-2.2, -30.2, 0],
+        },
+        {
+          type: "box", // floor4Left
+          halfExtents: [13.5, 0.2, 6],
+          offset: [24, -30.2, 0],
+        },
+        {
+          type: "box", // lastWall
+          halfExtents: [0.5, 30.4, 6],
+          offset: [-11.3, -60, 0],
+        },
+        {
+          type: "box", // lastWall
+          halfExtents: [0.5, 30.4, 6],
+          offset: [37.9, -60, 0],
+        },
+        {
+          type: "box", // lastFloor
+          halfExtents: [24.5, 0.2, 6],
+          offset: [13, -90.6, 0],
+        },
+        {
+          type: "box", // ramp
+          halfExtents: [2.3, 0.6, 0.05],
+          offset: [25.5, -8.45, -2.4],
+        },
+        {
+          type: "box", // ramp
+          halfExtents: [2.3, 0.6, 0.05],
+          offset: [25.5, -8.45, 2.4],
+        },
+      ],
+    });
   }
 
   private setupCollisionSound() {
-    this.physicBody.addEventListener(
+    if (this.physicBodyId === undefined)
+      throw new Error("physicBodyId is undefined");
+
+    this.application.physicApi.addListener(
+      this.physicBodyId,
       "collide",
-      (event: {
-        contact: {
-          bi: any;
-          getImpactVelocityAlongNormal: () => any;
-        };
-      }) => {
+      (event) => {
+        const targetData = this.application.physicApi.getBodyData(
+          event.targetId,
+        );
         const impactVelocity = parseFloat(
-          (
-            (event.contact.getImpactVelocityAlongNormal() *
-              event.contact.bi.mass) /
-            100
-          ).toFixed(1),
+          ((event.contact.impactVelocity * targetData.mass) / 100).toFixed(1),
         );
 
         if (impactVelocity > 0.1) {
@@ -93,9 +133,5 @@ export class Map {
 
   addInstanceToScene() {
     this.application.scene.add(this.instance);
-  }
-
-  addBodyToPhysicalWorld() {
-    this.application.physicWorld.addBody(this.physicBody);
   }
 }

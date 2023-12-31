@@ -1,14 +1,14 @@
-import * as THREE from "three";
+import { Clock } from "three";
 import EventEmitter from "eventemitter3";
 
 export class Time extends EventEmitter {
-  private clock: THREE.Clock;
+  private clock: Clock;
   private lastElapsedTime: number = 0;
   private deltaElapsedTime: number = 0;
 
   constructor() {
     super();
-    this.clock = new THREE.Clock();
+    this.clock = new Clock();
   }
 
   start() {

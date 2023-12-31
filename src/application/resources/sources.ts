@@ -85,8 +85,8 @@ export const sounds: Record<string, SoundSource> = {
 };
 
 export const fonts: Record<string, FontSource> = {
-  helvetiker: {
-    name: "helvetiker",
+  optimerbold: {
+    name: "optimerbold",
     type: "font",
     url: "/fonts/optimer_bold.typeface.json",
   },

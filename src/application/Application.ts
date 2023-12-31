@@ -7,17 +7,17 @@ import { Time } from "./utils/Time";
 import * as dat from "dat.gui";
 import Stats from "stats.js";
 import { Sound } from "./Sound";
-import * as CANNON from "cannon-es";
+
 import { Experience } from "./experience/Experience";
 import { MobileControl } from "./controls/mobile-control/MobileControl";
 import Tween from "@tweenjs/tween.js";
-import cannonDebugger from "cannon-es-debugger";
+import { PhysicApi } from "./physic/PhysicApi.js";
 
 export class Application {
   mouseControl: MouseControl;
   mobileControl: MobileControl;
   scene: Scene;
-  physicWorld: CANNON.World;
+  physicApi: PhysicApi;
   sizes: Sizes;
   camera: Camera;
   renderer: Renderer;
@@ -26,7 +26,6 @@ export class Application {
   sound: Sound;
   debug?: dat.GUI;
   stats?: Stats;
-  cannonDebugger: { update: () => void };
 
   constructor() {
     if (location.hash === "#debug") {
@@ -38,13 +37,11 @@ export class Application {
     this.scene = new Scene();
     this.camera = new Camera(this);
     this.renderer = new Renderer(this);
-    this.physicWorld = new CANNON.World();
+    this.physicApi = new PhysicApi();
     this.sound = new Sound(this);
     this.mouseControl = new MouseControl(this);
     this.mobileControl = new MobileControl(this);
     this.experience = new Experience(this);
-
-    this.cannonDebugger = cannonDebugger(this.scene, this.physicWorld);
 
     this.adjustFOV();
     this.time.on("tick", this.update);
@@ -101,14 +98,10 @@ export class Application {
 
   update = () => {
     this.stats?.begin();
-
+    Tween.update();
     this.mouseControl.updateRaycaster();
     this.experience.update();
-    //this.cannonDebugger.update();
     this.renderer.update();
-
-    Tween.update();
-
     this.stats?.end();
   };
 }

@@ -36,6 +36,27 @@ canvas {
   }
 }
 
+.resources-loaded #dialog {
+  & .content {
+    background: rgba(0, 0, 0, 0);
+    transition: background 3s ease-in-out;
+  }
+
+  & .title {
+    transition:
+      transform 3s ease-out,
+      opacity 3s ease-out;
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  & #button {
+    transition: 3s ease-in-out;
+    transition-delay: 3s;
+    opacity: 1;
+  }
+}
+
 #dialog {
   color: white;
   background: transparent;
@@ -64,11 +85,6 @@ canvas {
     background: rgba(0, 0, 0, 1);
     width: 100vw;
     height: 100vh;
-
-    .resources-loaded & {
-      background: rgba(0, 0, 0, 0);
-      transition: background 3s ease-in-out;
-    }
   }
 
   & .title {
@@ -82,14 +98,6 @@ canvas {
 
     opacity: 0;
     will-change: transform, opacity;
-
-    .resources-loaded & {
-      transition:
-        transform 3s ease-out,
-        opacity 3s ease-out;
-      transform: translateY(0);
-      opacity: 1;
-    }
   }
 
   & .loader_bar {
@@ -118,12 +126,6 @@ canvas {
     padding: 0.09rem 2rem;
     cursor: pointer;
     opacity: 0;
-
-    .resources-loaded & {
-      transition: 3s ease-in-out;
-      transition-delay: 3s;
-      opacity: 1;
-    }
   }
 
   & .credit {

@@ -1,11 +1,11 @@
 import { Application } from "../../Application";
-import * as THREE from "three";
+import { FogExp2, AmbientLight, HemisphereLight, Color } from "three";
 
 export class Environment {
   readonly defaultFogDensity: number = 0.05;
-  private readonly fog: THREE.FogExp2;
-  private readonly ambientLight: THREE.AmbientLight;
-  private readonly hemisphereLight: THREE.HemisphereLight;
+  private readonly fog: FogExp2;
+  private readonly ambientLight: AmbientLight;
+  private readonly hemisphereLight: HemisphereLight;
 
   private readonly colors = {
     background: 0x000000,
@@ -16,15 +16,15 @@ export class Environment {
     directionalLight: 0xffffff,
   };
   constructor(private application: Application) {
-    this.application.scene.background = new THREE.Color(this.colors.background);
-    this.fog = new THREE.FogExp2(this.colors.fog, this.defaultFogDensity); //0.07);
+    this.application.scene.background = new Color(this.colors.background);
+    this.fog = new FogExp2(this.colors.fog, this.defaultFogDensity); //0.07);
 
     this.application.scene.fog = this.fog;
 
-    this.ambientLight = new THREE.AmbientLight(this.colors.ambientLight, 0);
+    this.ambientLight = new AmbientLight(this.colors.ambientLight, 0);
     this.application.scene.add(this.ambientLight);
 
-    this.hemisphereLight = new THREE.HemisphereLight(
+    this.hemisphereLight = new HemisphereLight(
       this.colors.hemisphereLight,
       this.colors.hemisphereGroundLight,
       0.05,

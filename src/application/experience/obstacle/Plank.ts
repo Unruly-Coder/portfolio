@@ -4,64 +4,71 @@ import { Application } from "../../Application";
 
 export class Plank {
   private readonly bodyObject3D: Object3D;
-  private readonly bodyPhysical: CANNON.Body;
+  private bodyPhysicalId: number | undefined;
   private force: CANNON.Vec3 = new CANNON.Vec3(0, -0.3, 0);
   private isForceApplied: boolean = false;
+  private isInit: boolean = false;
 
   constructor(
     private application: Application,
     private model: Object3D,
+    private initialPosition?: [x: number, y: number, z: number],
   ) {
     this.bodyObject3D = model;
-    this.bodyPhysical = this.createPhysicalBody();
+  }
+
+  async init() {
+    await this.createPhysicalBody();
+    this.isInit = true;
   }
 
   setPosition(x: number, y: number, z: number) {
-    this.bodyPhysical.position.set(x, y, z);
+    if (this.bodyPhysicalId === undefined) return;
     this.model.position.set(x, y, z);
+    this.application.physicApi.setBodyPosition(this.bodyPhysicalId, x, y, z);
   }
 
   addInstanceToScene() {
     this.application.scene.add(this.bodyObject3D);
   }
 
-  addBodyToPhysicalWorld() {
-    this.application.physicWorld.addBody(this.bodyPhysical);
-  }
-
   update() {
+    if (this.bodyPhysicalId === undefined) return;
+
     if (this.isForceApplied) {
-      this.bodyPhysical.applyForce(this.force);
+      this.application.physicApi.applyForce({
+        id: this.bodyPhysicalId,
+        force: [this.force.x, this.force.y, this.force.z],
+      });
     }
 
-    this.bodyObject3D.position.x = this.bodyPhysical.position.x;
-    this.bodyObject3D.position.y = this.bodyPhysical.position.y;
-    this.bodyObject3D.position.z = this.bodyPhysical.position.z;
-
-    this.bodyObject3D.quaternion.x = this.bodyPhysical.quaternion.x;
-    this.bodyObject3D.quaternion.y = this.bodyPhysical.quaternion.y;
-    this.bodyObject3D.quaternion.z = this.bodyPhysical.quaternion.z;
-    this.bodyObject3D.quaternion.w = this.bodyPhysical.quaternion.w;
+    const bodyData = this.application.physicApi.getBodyData(
+      this.bodyPhysicalId,
+    );
+    this.bodyObject3D.position.copy(bodyData.position);
+    this.bodyObject3D.quaternion.copy(bodyData.quaternion);
   }
 
   applyForce() {
     this.isForceApplied = true;
   }
 
-  private createPhysicalBody() {
+  private async createPhysicalBody() {
     const boundingBox = new Box3().setFromObject(this.model);
     const sizeVector = new Vector3();
     boundingBox.getSize(sizeVector);
 
-    const box = new CANNON.Box(
-      new CANNON.Vec3(sizeVector.x / 2, sizeVector.y / 2, sizeVector.z / 2),
-    );
-
-    return new CANNON.Body({
+    this.bodyPhysicalId = await this.application.physicApi.addBody({
       mass: 1,
-      shape: box,
       allowSleep: true,
       sleepSpeedLimit: 0.1,
+      position: this.initialPosition,
+      shapes: [
+        {
+          type: "box",
+          halfExtents: [sizeVector.x / 2, sizeVector.y / 2, sizeVector.z / 2],
+        },
+      ],
     });
   }
 }

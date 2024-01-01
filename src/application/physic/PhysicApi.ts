@@ -19,7 +19,9 @@ export class PhysicApi {
       velocity: Vector3;
     }
   > = new Map();
-  private transferBuffer: Float32Array = new Float32Array(1 + (TRANSFER_BUFFER_SIZE * BODY_SIZE));
+  private transferBuffer: Float32Array = new Float32Array(
+    1 + TRANSFER_BUFFER_SIZE * BODY_SIZE,
+  );
 
   private listeners: Map<
     number,
@@ -33,25 +35,17 @@ export class PhysicApi {
     this.worker.onmessage = ({ data }: MessageEvent<WorkerMessage>) => {
       switch (data.operation) {
         case "step":
-
           this.transferBuffer = data.payload;
-          
-          
-          for(let i = 0; i < data.payload[0]; i++) {
-            const id = data.payload[i * BODY_SIZE + 1];
 
-            const position = this.bodies.get(id)?.position;
-            if (!position) {
+          for (let i = 0; i < data.payload[0]; i++) {
+            const id = data.payload[i * BODY_SIZE + 1];
+            const body = this.bodies.get(id);
+            if (!body) {
               throw new Error(`Body with uuid ${id} not found`);
             }
-            const quaternion = this.bodies.get(id)?.quaternion;
-            if (!quaternion) {
-              throw new Error(`Body with uuid ${id} not found`);
-            }
-            const velocity = this.bodies.get(id)?.velocity;
-            if (!velocity) {
-              throw new Error(`Body with uuid ${id} not found`);
-            }
+
+            const { position, quaternion, velocity } = body;
+
             position.set(
               data.payload[i * BODY_SIZE + 2],
               data.payload[i * BODY_SIZE + 3],
@@ -86,10 +80,13 @@ export class PhysicApi {
   }
 
   step(payload: number) {
-    if(this.transferBuffer.buffer.byteLength === 0) return;
+    if (this.transferBuffer.buffer.byteLength === 0) return;
     this.worker.postMessage(
-      { operation: "step", payload: { deltaTime: payload, transferBuffer: this.transferBuffer} }, 
-      [this.transferBuffer.buffer]
+      {
+        operation: "step",
+        payload: { deltaTime: payload, transferBuffer: this.transferBuffer },
+      },
+      [this.transferBuffer.buffer],
     );
   }
 

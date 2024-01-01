@@ -1,13 +1,9 @@
-import { Triplet, Quadruplet } from "../types.js";
 import { Body, ContactEquation } from "cannon-es";
 
 type MessageShape<T extends string, K> = { operation: T; payload: K };
 
 export type MessageWorkerMap = {
-  step: MessageShape<
-    "step",
-    Float32Array
-  >;
+  step: MessageShape<"step", Float32Array>;
   addBody: MessageShape<"addBody", number>;
   collide: MessageShape<"collide", WorkerCollideEvent>;
 };

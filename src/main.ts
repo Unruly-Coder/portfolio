@@ -35,7 +35,7 @@ function resourcesLoadedHandler() {
   addBodyClass("resources-loaded");
 
   exploreButton?.addEventListener("pointerup", (event) => {
-    if(event.pointerType === "mouse") {
+    if (event.pointerType === "mouse") {
       explorationStartHandler(application);
       mouseHelper?.style.setProperty("opacity", "1");
     } else {

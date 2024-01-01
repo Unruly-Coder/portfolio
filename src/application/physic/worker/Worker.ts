@@ -149,7 +149,7 @@ function addBody(data: MessageMap["addBody"]["payload"]) {
 
   body.addEventListener(
     "collide",
-    ({  body, target, contact }: CannonCollideEvent) => {
+    ({ body, target, contact }: CannonCollideEvent) => {
       const { ni, ri, rj, bi, bj, id } = contact;
       const contactPoint = bi.position.vadd(ri);
       const contactNormal = bi === body ? ni : ni.scale(-1);
@@ -228,12 +228,11 @@ function setBodyCollisionResponse(
 function step(data: MessageMap["step"]["payload"]) {
   physicWorld.step(1 / 60, data.deltaTime, 3);
   const { transferBuffer } = data;
-  const nrOfData = 11; 
-  
+  const nrOfData = 11;
+
   transferBuffer[0] = physicWorld.bodies.length;
-  
+
   physicWorld.bodies.forEach((body, index) => {
-    
     transferBuffer[index * nrOfData + 1] = body.id;
     transferBuffer[index * nrOfData + 2] = body.position.x;
     transferBuffer[index * nrOfData + 3] = body.position.y;
@@ -246,9 +245,12 @@ function step(data: MessageMap["step"]["payload"]) {
     transferBuffer[index * nrOfData + 10] = body.velocity.y;
     transferBuffer[index * nrOfData + 11] = body.velocity.z;
   });
-  
-  self.postMessage({
-    operation: "step",
-    payload: transferBuffer
-  }, [transferBuffer.buffer]);
+
+  self.postMessage(
+    {
+      operation: "step",
+      payload: transferBuffer,
+    },
+    [transferBuffer.buffer],
+  );
 }

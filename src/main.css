@@ -57,11 +57,11 @@ canvas {
   }
 }
 
-.exploration-started  {
-    & #github-link {
-        opacity: 1 !important;
-        pointer-events: all;
-    }
+.exploration-started {
+  & #github-link {
+    opacity: 1 !important;
+    pointer-events: all;
+  }
 }
 
 #dialog {
@@ -154,7 +154,7 @@ canvas {
   opacity: 0;
   transition: opacity 1s ease-in-out;
   pointer-events: none;
-  
+
   & img {
     width: 100%;
     height: 100%;

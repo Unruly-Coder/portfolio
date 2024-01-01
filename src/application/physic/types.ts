@@ -47,7 +47,7 @@ type AddBodyData = {
 type StepData = {
   deltaTime: number;
   transferBuffer: Float32Array;
-}
+};
 
 export type MessageMap = {
   init: MessageShape<"init", InitData>;

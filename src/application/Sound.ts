@@ -48,10 +48,7 @@ export class Sound {
   initMuteButton() {
     if (this.audioButton) {
       this.audioButton.classList.add("visible");
-      this.audioButton.addEventListener("click", () => {
-        this.toggleMute();
-      });
-      this.audioButton.addEventListener("touchend", () => {
+      this.audioButton.addEventListener("pointerup", () => {
         this.toggleMute();
       });
     }

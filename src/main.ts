@@ -34,13 +34,13 @@ function resourcesLoadedHandler() {
   application.start();
   addBodyClass("resources-loaded");
 
-  exploreButton?.addEventListener("click", () => {
-    explorationStartHandler(application);
-    mouseHelper?.style.setProperty("opacity", "1");
-  });
-
-  exploreButton?.addEventListener("touchend", () => {
-    explorationStartHandler(application, true);
+  exploreButton?.addEventListener("pointerup", (event) => {
+    if(event.pointerType === "mouse") {
+      explorationStartHandler(application);
+      mouseHelper?.style.setProperty("opacity", "1");
+    } else {
+      explorationStartHandler(application, true);
+    }
   });
 }
 

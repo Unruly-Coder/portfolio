@@ -25,14 +25,6 @@ export class MobileControl extends EventEmitter {
       },
       { passive: false },
     );
-
-    window.addEventListener(
-      "touchend",
-      (ev) => {
-        ev.preventDefault();
-      },
-      { passive: false },
-    );
   }
 
   enable() {

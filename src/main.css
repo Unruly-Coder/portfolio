@@ -57,6 +57,13 @@ canvas {
   }
 }
 
+.exploration-started  {
+    & #github-link {
+        opacity: 1 !important;
+        pointer-events: all;
+    }
+}
+
 #dialog {
   color: white;
   background: transparent;
@@ -135,6 +142,22 @@ canvas {
     top: 15px;
     right: 20px;
     text-align: center;
+  }
+}
+
+#github-link {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: auto;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  pointer-events: none;
+  
+  & img {
+    width: 100%;
+    height: 100%;
   }
 }
 

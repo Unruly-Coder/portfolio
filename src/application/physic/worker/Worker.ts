@@ -225,23 +225,30 @@ function setBodyCollisionResponse(
   body.collisionResponse = data.isCollisionResponse;
 }
 
-function step(elapsedTime: number) {
-  physicWorld.step(1 / 60, elapsedTime, 3);
-
+function step(data: MessageMap["step"]["payload"]) {
+  physicWorld.step(1 / 60, data.deltaTime, 3);
+  const { transferBuffer } = data;
+  const nrOfData = 11; 
+  
+  transferBuffer[0] = physicWorld.bodies.length;
+  
+  physicWorld.bodies.forEach((body, index) => {
+    
+    transferBuffer[index * nrOfData + 1] = body.id;
+    transferBuffer[index * nrOfData + 2] = body.position.x;
+    transferBuffer[index * nrOfData + 3] = body.position.y;
+    transferBuffer[index * nrOfData + 4] = body.position.z;
+    transferBuffer[index * nrOfData + 5] = body.quaternion.x;
+    transferBuffer[index * nrOfData + 6] = body.quaternion.y;
+    transferBuffer[index * nrOfData + 7] = body.quaternion.z;
+    transferBuffer[index * nrOfData + 8] = body.quaternion.w;
+    transferBuffer[index * nrOfData + 9] = body.velocity.x;
+    transferBuffer[index * nrOfData + 10] = body.velocity.y;
+    transferBuffer[index * nrOfData + 11] = body.velocity.z;
+  });
+  
   self.postMessage({
     operation: "step",
-    payload: physicWorld.bodies.map((body) => {
-      return {
-        id: body.id,
-        position: [body.position.x, body.position.y, body.position.z],
-        quaternion: [
-          body.quaternion.x,
-          body.quaternion.y,
-          body.quaternion.z,
-          body.quaternion.w,
-        ],
-        velocity: [body.velocity.x, body.velocity.y, body.velocity.z],
-      };
-    }),
-  });
+    payload: transferBuffer
+  }, [transferBuffer.buffer]);
 }

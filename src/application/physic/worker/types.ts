@@ -6,12 +6,7 @@ type MessageShape<T extends string, K> = { operation: T; payload: K };
 export type MessageWorkerMap = {
   step: MessageShape<
     "step",
-    {
-      id: number;
-      position: Triplet;
-      quaternion: Quadruplet;
-      velocity: Triplet;
-    }[]
+    Float32Array
   >;
   addBody: MessageShape<"addBody", number>;
   collide: MessageShape<"collide", WorkerCollideEvent>;

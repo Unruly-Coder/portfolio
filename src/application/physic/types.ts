@@ -44,9 +44,14 @@ type AddBodyData = {
   linearFactor?: Triplet;
 };
 
+type StepData = {
+  deltaTime: number;
+  transferBuffer: Float32Array;
+}
+
 export type MessageMap = {
   init: MessageShape<"init", InitData>;
-  step: MessageShape<"step", number>;
+  step: MessageShape<"step", StepData>;
   addBody: MessageShape<"addBody", AddBodyData>;
   applyImpulse: MessageShape<"applyImpulse", WithId<{ impulse: Triplet }>>;
   applyForce: MessageShape<"applyForce", WithId<{ force: Triplet }>>;

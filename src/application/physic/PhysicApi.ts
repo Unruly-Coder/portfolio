@@ -2,6 +2,11 @@ import { MessageMap } from "./types";
 import { WorkerCollideEvent, WorkerMessage } from "./worker/types.js";
 import { Quaternion, Vector3 } from "three";
 
+const TRANSFER_BUFFER_SIZE = 100;
+const QUATERNION_SIZE = 4;
+const VECTOR_SIZE = 3;
+const BODY_SIZE = 1 + VECTOR_SIZE * 2 + QUATERNION_SIZE; //id + position + velocity + quaternion
+
 export class PhysicApi {
   private worker: Worker;
   private bodies: Map<
@@ -14,6 +19,7 @@ export class PhysicApi {
       velocity: Vector3;
     }
   > = new Map();
+  private transferBuffer: Float32Array = new Float32Array(1 + (TRANSFER_BUFFER_SIZE * BODY_SIZE));
 
   private listeners: Map<
     number,
@@ -27,29 +33,42 @@ export class PhysicApi {
     this.worker.onmessage = ({ data }: MessageEvent<WorkerMessage>) => {
       switch (data.operation) {
         case "step":
-          data.payload.forEach((bodyData) => {
-            const body = this.bodies.get(bodyData.id);
-            if (!body) {
-              throw new Error(`Body with uuid ${bodyData.id} not found`);
-            }
 
-            body.position.set(
-              bodyData.position[0],
-              bodyData.position[1],
-              bodyData.position[2],
+          this.transferBuffer = data.payload;
+          
+          
+          for(let i = 0; i < data.payload[0]; i++) {
+            const id = data.payload[i * BODY_SIZE + 1];
+
+            const position = this.bodies.get(id)?.position;
+            if (!position) {
+              throw new Error(`Body with uuid ${id} not found`);
+            }
+            const quaternion = this.bodies.get(id)?.quaternion;
+            if (!quaternion) {
+              throw new Error(`Body with uuid ${id} not found`);
+            }
+            const velocity = this.bodies.get(id)?.velocity;
+            if (!velocity) {
+              throw new Error(`Body with uuid ${id} not found`);
+            }
+            position.set(
+              data.payload[i * BODY_SIZE + 2],
+              data.payload[i * BODY_SIZE + 3],
+              data.payload[i * BODY_SIZE + 4],
             );
-            body.quaternion.set(
-              bodyData.quaternion[0],
-              bodyData.quaternion[1],
-              bodyData.quaternion[2],
-              bodyData.quaternion[3],
+            quaternion.set(
+              data.payload[i * BODY_SIZE + 5],
+              data.payload[i * BODY_SIZE + 6],
+              data.payload[i * BODY_SIZE + 7],
+              data.payload[i * BODY_SIZE + 8],
             );
-            body.velocity.set(
-              bodyData.velocity[0],
-              bodyData.velocity[1],
-              bodyData.velocity[2],
+            velocity.set(
+              data.payload[i * BODY_SIZE + 9],
+              data.payload[i * BODY_SIZE + 10],
+              data.payload[i * BODY_SIZE + 11],
             );
-          });
+          }
           break;
         case "collide":
           const listeners = this.listeners.get(data.payload.bodyId);
@@ -66,8 +85,12 @@ export class PhysicApi {
     this.worker.postMessage({ operation: "init", payload });
   }
 
-  step(payload: MessageMap["step"]["payload"]) {
-    this.worker.postMessage({ operation: "step", payload });
+  step(payload: number) {
+    if(this.transferBuffer.buffer.byteLength === 0) return;
+    this.worker.postMessage(
+      { operation: "step", payload: { deltaTime: payload, transferBuffer: this.transferBuffer} }, 
+      [this.transferBuffer.buffer]
+    );
   }
 
   async addBody(payload: MessageMap["addBody"]["payload"]) {

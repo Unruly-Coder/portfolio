@@ -208,7 +208,7 @@ export class Submarine extends EventEmitter {
     if (this.physicBodyId === undefined) return;
 
     if (this.isExtraPowerLoading && this.extraPower < this.maxExtraPower) {
-      this.extraPower += this.application.time.getDeltaElapsedTime() * 100;
+      this.extraPower += Math.floor(this.application.time.getDeltaElapsedTime() * 100);
     }
 
     this.application.physicApi.applyImpulse({
@@ -266,6 +266,29 @@ export class Submarine extends EventEmitter {
   addInstanceToScene() {
     this.application.scene.add(this.instance);
   }
+  
+  getLightPower() {
+    if(!this.isExtraPowerLoading) {
+      return 1;
+    }
+    
+    const powerPercent = this.extraPower / this.maxExtraPower;
+    let outputPower = Math.max(1 - (powerPercent), 0.3);
+
+    const timeWindow = 0.05;
+    const baseInterval = 0.5;
+    
+    // Calculate the adjustment interval based on powerPercent
+    const adjustmentInterval = baseInterval - (0.25 * powerPercent);
+
+    const elapsedTime = this.application.time.getElapsedTime();
+    if(elapsedTime % adjustmentInterval < timeWindow) {
+      outputPower *= Math.random() * 0.5;
+    }
+    
+    
+    return outputPower
+  }
 
   update() {
     this.syncData();
@@ -289,6 +312,7 @@ export class Submarine extends EventEmitter {
 
     this.adjustBenchRotation();
     this.reflector.update();
+    this.reflector.setLightPower(this.getLightPower());
     this.bubbles.update();
   }
 }

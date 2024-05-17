@@ -23,6 +23,9 @@ export class Reflector {
   private spotLight!: SpotLight;
   private cone!: Mesh;
   private coneMaterial!: MeshBasicMaterial;
+  private coneMaterial2!: MeshBasicMaterial;
+  private lightPower: number = 1;
+  private readonly lightMaxIntensity: number = 250;
 
   private lastTargetLightBeamRotation = 0;
 
@@ -62,7 +65,7 @@ export class Reflector {
     handle.add(handleMesh);
     handle.add(handleMesh2);
 
-    const coneHeight = 9;
+    const coneHeight = 15;
     const angle = Math.PI / 4;
     const coneGeometry = new CylinderGeometry(
       0.1,
@@ -112,8 +115,9 @@ export class Reflector {
 
     cone.add(cone2);
     this.coneMaterial = coneMaterial;
+    this.coneMaterial2 = coneMaterial2;
 
-    const spotLight = new SpotLight(this.colors.spotlightColor, 250, 30); //0x7eeefc
+    const spotLight = new SpotLight(this.colors.spotlightColor, this.lightMaxIntensity, 30); //0x7eeefc
     spotLight.penumbra = 1;
 
     spotLight.position.y = 0;
@@ -279,9 +283,21 @@ export class Reflector {
     this.cone.rotation.y +=
       Math.sin(this.application.time.getElapsedTime() * 0.3) * 0.009;
   }
+  
+  private adjustLightPower() {
+    this.spotLight.intensity = this.lightPower * this.lightMaxIntensity
+  }
+  
+  setLightPower(power: number) {
+    this.lightPower = power;
+    //change cone opacity based on power
+    this.coneMaterial.opacity = power * 0.09;
+    this.coneMaterial2.opacity = power * 0.03;
+  }
 
   update() {
     this.adjustLampRotation();
     this.adjustLampDirection();
+    this.adjustLightPower()
   }
 }

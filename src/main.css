@@ -49,6 +49,11 @@ canvas {
     transform: translateY(0);
     opacity: 1;
   }
+  
+    & .description {
+        transition: opacity 3s ease-in-out;
+        opacity: 1;
+    }
 
   & #button {
     transition: 3s ease-in-out;
@@ -92,6 +97,15 @@ canvas {
     background: rgba(0, 0, 0, 1);
     width: 100vw;
     height: 100vh;
+  }
+  
+  & .description {
+    position: absolute;
+    bottom: 1rem;
+    font-size: min(0.7rem, 2.8vw);
+    color: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    will-change: opacity;
   }
 
   & .title {
@@ -137,10 +151,9 @@ canvas {
 
   & .credit {
     font-size: min(0.7rem, 2.8vw);
-    position: absolute;
+ 
     color: rgba(255, 255, 255, 0.5);
-    top: 15px;
-    right: 20px;
+
     text-align: center;
   }
 }

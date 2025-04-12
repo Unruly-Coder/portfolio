@@ -1,6 +1,11 @@
-# Paweł Bród Portfolio
+# Echoes from Below - Portfolio
 
+Experience heavily inspired by [INSIDE](https://playdead.com/games/inside/) game by [Playdead](https://playdead.com)
+
+---
 <a href="https://pawel-brod.com">-- Click here to visit the website--</a>
+
+---
 
 ## Technical details 
 - 3D engine: <a href="https://threejs.org/">Three.js</a>

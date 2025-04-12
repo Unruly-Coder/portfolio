@@ -20,7 +20,7 @@
     "eventemitter3": "^5.0.1",
     "howler": "^2.2.4",
     "stats.js": "^0.17.0",
-    "three": "^0.160.0",
+    "three": "^0.175.0",
     "vite": "^5.0.2"
   },
   "devDependencies": {

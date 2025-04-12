@@ -208,7 +208,7 @@ export class Submarine extends EventEmitter {
     if (this.physicBodyId === undefined) return;
 
     if (this.isExtraPowerLoading && this.extraPower < this.maxExtraPower) {
-      this.extraPower += Math.floor(this.application.time.getDeltaElapsedTime() * 100);
+      this.extraPower += this.application.time.getDeltaElapsedTime() * 100;
     }
 
     this.application.physicApi.applyImpulse({

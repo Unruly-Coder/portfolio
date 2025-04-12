@@ -5,7 +5,7 @@ export class Github extends ActiveElement {
   constructor(application: Application) {
     super(application, {
       text: "GITHUB",
-      url: "https://github.com/Crazy-Ivan",
+      url: "https://github.com/Unruly-Coder",
     });
   }
 }
